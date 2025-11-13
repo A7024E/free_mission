@@ -2,31 +2,16 @@ package shopping.backend.member;
 
 public class Member {
 
-    private Long id;
-    private String name;
-    private String password;
-    private String gender;
+    private MemberId id;
+    private Password password;
+    private NickName nickName;
+    private Gender gender;
 
-    public Member(Long id, String name, String password, String gender) {
+    public Member(MemberId id, Password password, NickName nickName, Gender gender) {
         this.id = id;
-        this.name = name;
         this.password = password;
+        this.nickName = nickName;
         this.gender = gender;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getGender() {
-        return gender;
-    }
 }
