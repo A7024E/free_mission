@@ -15,7 +15,7 @@ public class MemberId {
             throw new IllegalArgumentException("아이디에 공백을 입력할 수 없습니다");
         }
 
-        if(id.isBlank()){
+        if(id.contains(" ")){
             throw new IllegalArgumentException("아이디에 빈칸을 입력할수 없습니다");
         }
     }
