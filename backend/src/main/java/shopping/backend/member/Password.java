@@ -6,6 +6,7 @@ public class Password {
     private String password;
 
     public Password(String password) {
+        validate(password);
         this.password = password;
     }
 
@@ -25,6 +26,10 @@ public class Password {
         if(password.isBlank()){
             throw new IllegalArgumentException("패스워드는 빈칸을 입력할 수 없습니다");
         }
+    }
+
+    public boolean isSame(String password){
+        return this.password.equals(password);
     }
 
     @Override
