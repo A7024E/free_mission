@@ -9,8 +9,8 @@ public class JpaMemberRepository implements MemberRepository {
 
     private final SpringDataJpaMemberRepository jpaMemberRepository;
 
-    public JpaMemberRepository(SpringDataJpaMemberRepository jpa) {
-        this.jpaMemberRepository = jpa;
+    public JpaMemberRepository(SpringDataJpaMemberRepository jpaMemberRepository) {
+        this.jpaMemberRepository = jpaMemberRepository;
     }
 
     @Override
