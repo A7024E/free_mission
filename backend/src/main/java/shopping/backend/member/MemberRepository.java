@@ -7,4 +7,5 @@ public interface MemberRepository {
     Optional<Member> findById(MemberId id);
     Optional<Member> findByNickName(NickName nickName);
     boolean existsByNickName(NickName nickName);
+
 }

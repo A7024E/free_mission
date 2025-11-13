@@ -1,17 +1,25 @@
 package shopping.backend.member;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+@Embeddable
 public class NickName {
     private static final String NICKNAME_PATTERN = "^[A-Za-z0-9가-힣]{2,8}$";
     private static final Pattern PATTERN = Pattern.compile(NICKNAME_PATTERN);
 
+    @Column(name = "nick_name")
     private String NickName;
+
 
     public NickName(String nickName) {
         validate(nickName);
         NickName = nickName;
+    }
+
+    public NickName() {
     }
 
     private void validate(String nickName) {
@@ -23,13 +31,13 @@ public class NickName {
             throw new IllegalArgumentException("닉네임에 공백을 사용할 수 없습니다");
         }
 
-        if(nickName.isBlank()){
+        if (nickName.isBlank()) {
             throw new IllegalArgumentException("닉네임는 빈칸을 사용할 수 없습니다");
         }
     }
 
     private static boolean isValidNickName(String nickName) {
-        return PATTERN.matcher(nickName).matches();
+        return !PATTERN.matcher(nickName).matches();
     }
 
     @Override

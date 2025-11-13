@@ -1,13 +1,20 @@
 package shopping.backend.member;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Password {
+    @Column(name = "password")
     private String password;
 
     public Password(String password) {
         validate(password);
         this.password = password;
+    }
+
+    public Password() {
     }
 
     public String getPassword() {
@@ -28,8 +35,8 @@ public class Password {
         }
     }
 
-    public boolean isSame(String password){
-        return this.password.equals(password);
+    public boolean isSame(Password other){
+        return this.password.equals(other.password);
     }
 
     @Override

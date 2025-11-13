@@ -43,14 +43,15 @@ public class MemberService {
         Password password = new Password(request.password());
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        if(isPasswordMatch(request, password)){
+        if(!isPasswordMatch(request, password)){
             throw new IllegalArgumentException("패스워드가 틀립니다 다시 확인해주세요");
         }
         return member;
     }
 
-    private static boolean isPasswordMatch(MemberJoinRequest request, Password password) {
-        return password.isSame(request.password());
+    private static boolean isPasswordMatch(MemberJoinRequest request, Password storedPassword) {
+        Password inputPassword = new Password(request.password());
+        return storedPassword.isSame(inputPassword);
     }
 
 }

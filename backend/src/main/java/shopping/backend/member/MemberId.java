@@ -1,8 +1,13 @@
 package shopping.backend.member;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Id;
 import java.util.Objects;
 
+@Embeddable
 public class MemberId {
+    @Column(name = "id")
     private String id;
 
     public MemberId(String id) {
@@ -10,12 +15,15 @@ public class MemberId {
         this.id = id;
     }
 
-    public void validate(String id){
-        if(id == null || id.isEmpty()){
+    public MemberId() {
+    }
+
+    public void validate(String id) {
+        if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("아이디에 공백을 입력할 수 없습니다");
         }
 
-        if(id.contains(" ")){
+        if (id.contains(" ")) {
             throw new IllegalArgumentException("아이디에 빈칸을 입력할수 없습니다");
         }
     }
