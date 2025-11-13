@@ -1,29 +1,27 @@
 package shopping.backend.member;
 
-import java.util.Objects;
+public enum Gender {
+    MALE("남"),
+    FEMALE("여");
+    
+    private final String label;
 
-public class Gender {
-    private String gender;
-
-    public Gender(String gender) {
-        this.gender = gender;
+    Gender(String label) {
+        this.label = label;
     }
+    
+    public static Gender ofLabel(String label) {
 
-    public String getGender() {
-        return gender;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+        for (Gender gender : values()) {
+            if(getLabel(gender).equals(label) || getLabel(gender).equalsIgnoreCase(label) ) {
+                return gender;
+            }
         }
-        Gender gender1 = (Gender) o;
-        return Objects.equals(gender, gender1.gender);
+        throw new IllegalArgumentException("올바른 성별이 아닙니다.");
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(gender);
+    private static String getLabel(Gender gender) {
+        return gender.label;
     }
+
 }
