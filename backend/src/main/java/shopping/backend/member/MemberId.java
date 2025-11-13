@@ -12,7 +12,15 @@ public class MemberId {
     public String getId() {
         return id;
     }
+    public void validate(String id){
+        if(id == null || id.isEmpty()){
+            throw new IllegalArgumentException("아이디에 공백을 입력할 수 없습니다");
+        }
 
+        if(id.isBlank()){
+            throw new IllegalArgumentException("아이디에 빈칸을 입력할수 없습니다");
+        }
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

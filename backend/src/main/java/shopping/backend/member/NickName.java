@@ -20,7 +20,11 @@ public class NickName {
         }
 
         if (nickName == null || nickName.isEmpty()) {
-            throw new IllegalArgumentException("닉네임에 빈칸을 사용할수 없습니다");
+            throw new IllegalArgumentException("닉네임에 공백을 사용할 수 없습니다");
+        }
+
+        if(nickName.isBlank()){
+            throw new IllegalArgumentException("닉네임는 빈칸을 사용할 수 없습니다");
         }
     }
 
