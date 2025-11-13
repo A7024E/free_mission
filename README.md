@@ -1,8 +1,9 @@
 # 간단한 쇼핑몰 구현하기
 
-Back : Spring
+* Back : Spring
+* DB : h2
 
-FrontEnd : react
+* FrontEnd : react
 
 # 회원
 
