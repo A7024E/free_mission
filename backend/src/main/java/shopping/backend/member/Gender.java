@@ -11,7 +11,6 @@ public enum Gender {
     }
     
     public static Gender ofLabel(String label) {
-
         for (Gender gender : values()) {
             if(getLabel(gender).equals(label) || getLabel(gender).equalsIgnoreCase(label) ) {
                 return gender;

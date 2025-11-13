@@ -1,16 +1,31 @@
 package shopping.backend.member;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class NickName {
+    private static final String NICKNAME_PATTERN = "^[A-Za-z0-9가-힣]{2,8}$";
+    private static final Pattern PATTERN = Pattern.compile(NICKNAME_PATTERN);
+
     private String NickName;
 
     public NickName(String nickName) {
+        validate(nickName);
         NickName = nickName;
     }
 
-    public String getNickName() {
-        return NickName;
+    private void validate(String nickName) {
+        if (isValidNickName(nickName)) {
+            throw new IllegalArgumentException("닉네임은 한글,영어,숫자 및 2-8 글자까지 가능합니다");
+        }
+
+        if (nickName == null || nickName.isEmpty()) {
+            throw new IllegalArgumentException("닉네임에 빈칸을 사용할수 없습니다");
+        }
+    }
+
+    private static boolean isValidNickName(String nickName) {
+        return PATTERN.matcher(nickName).matches();
     }
 
     @Override
