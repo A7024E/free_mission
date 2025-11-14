@@ -40,6 +40,10 @@ public class NickName {
         return !PATTERN.matcher(nickName).matches();
     }
 
+    public String value() {
+        return NickName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
