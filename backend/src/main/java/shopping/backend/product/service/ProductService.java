@@ -51,5 +51,11 @@ public class ProductService {
                 )).toList();
     }
 
-
+    public List<ProductListResponse> search(String keyword) {
+        List<Product> products = productRepository.findByProductName_ProductNameContaining(keyword);
+        return products.stream()
+                .map(product -> new ProductListResponse(
+                        product.id(), product.name(), product.price(), product.stock(), product.category()
+                )).toList();
+    }
 }

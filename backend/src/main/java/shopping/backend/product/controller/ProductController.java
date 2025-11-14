@@ -40,6 +40,8 @@ public class ProductController {
         return productService.findByCategory(category.label());
     }
 
-
-
+    @GetMapping("/search")
+    public List<ProductListResponse> search(@RequestParam("keyword") String keyword) {
+        return productService.search(keyword);
+    }
 }

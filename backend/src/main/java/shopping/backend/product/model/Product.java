@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Embedded
-    @AttributeOverride(name = "name", column = @Column(name = "product_name"))
+    @AttributeOverride(name = "productName", column = @Column(name = "product_name"))
     private ProductName productName;
     @Embedded
     private Price price;
