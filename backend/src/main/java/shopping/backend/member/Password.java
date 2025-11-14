@@ -22,9 +22,9 @@ public class Password {
     }
 
     private void validate(String password){
-        if(password.length() < 12){
-            throw new IllegalArgumentException("패스워드는 12자리로 입력해야합니다");
-        }
+//        if(password.length() < 8){
+//            throw new IllegalArgumentException("패스워드는 8자리로 입력해야합니다");
+//        }
 
         if(password == null || password.isEmpty()){
             throw new IllegalArgumentException("패스워드는 공백이 될 수 없습니다");
@@ -41,10 +41,9 @@ public class Password {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Password password1)) {
             return false;
         }
-        Password password1 = (Password) o;
         return Objects.equals(password, password1.password);
     }
 
