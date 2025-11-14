@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background: #f5f5f5;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 380px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .info-box {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .info-box span {
+            font-weight: 600;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #6a5acd;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 12px;
+            font-size: 15px;
+        }
+        button:hover {
+            background: #5b4dc0;
+        }
+        .danger {
+            background: #d9534f;
+        }
+        .danger:hover {
+            background: #c9302c;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #555;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>내 정보</h2>
+
+    <div class="info-box"><span>아이디:</span> <span id="id"></span></div>
+    <div class="info-box"><span>닉네임:</span> <span id="nickName"></span></div>
+    <div class="info-box"><span>성별:</span> <span id="gender"></span></div>
+
+    <button onclick="location.href='update_verify.html'">회원정보 수정</button>
+    <button class="danger" onclick="location.href='delete_verify.html'">회원탈퇴</button>
+    <a href="index.html">← 홈으로</a>
+</div>
+
+<script>
+    const userId = localStorage.getItem("loginUser");
+
+    if (!userId) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "login.html";
+    }
+
+    async function loadInfo() {
+        const res = await fetch(`http://localhost:8080/members/info/${userId}`);
+
+        if (!res.ok) {
+            alert("회원 정보를 불러오지 못했습니다.");
+            return;
+        }
+
+        const data = await res.json();
+        console.log(document.getElementById)
+        document.getElementById("id").textContent = data.id;
+        document.getElementById("nickName").textContent = data.nickName;
+        document.getElementById("gender").textContent = data.gender;
+    }
+
+    loadInfo();
+</script>
+
+</body>
+</html>
