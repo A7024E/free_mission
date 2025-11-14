@@ -11,6 +11,7 @@ import shopping.backend.member.MemberId;
 import shopping.backend.member.MemberRepository;
 import shopping.backend.member.NickName;
 import shopping.backend.member.Password;
+import shopping.backend.member.dto.MemberInfoResponse;
 import shopping.backend.member.dto.MemberJoinRequest;
 import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
@@ -27,7 +28,6 @@ public class MemberService {
     }
 
     public void join(MemberJoinRequest memberJoinRequest) {
-        System.out.println("받은 성별 = '" + memberJoinRequest.gender() + "'");
         if (memberRepository.existsByNickName(new NickName(memberJoinRequest.nickName()))) {
             throw new IllegalArgumentException("중복된 닉네임이 존재합니다");
         }
@@ -66,7 +66,6 @@ public class MemberService {
         Member member = findUserId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-
         if (request.newPassword() != null && !request.newPassword().isBlank()) {
             member.updatePassword(new Password(request.newPassword()));
             updatedValues.add("패스워드");
@@ -89,26 +88,36 @@ public class MemberService {
     public void delete(String id) {
         MemberId memberId = new MemberId(id);
         Member member = findUserId(memberId)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 회원입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
         memberRepository.delete(member);
     }
 
     @Transactional()
-    public void verify(String id,MemberVerifyRequest request) {
+    public void verify(String id, MemberVerifyRequest request) {
         MemberId memberId = new MemberId(id);
         Member member = findUserId(memberId)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 회원입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
 
         Password inputPassword = new Password(request.currentPassword());
-        if(!member.isPasswordMatch(inputPassword)){
+        if (!member.isPasswordMatch(inputPassword)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
     }
 
-    private Optional<Member> findUserId(MemberId memberId) {
-        return memberRepository.findById(memberId);
+    @Transactional()
+    public MemberInfoResponse findMemberInfo(String id) {
+        MemberId memberId = new MemberId(id);
+        Member member = findUserId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
+        return new MemberInfoResponse(
+                member.Id(),
+                member.nickName(),
+                member.gender()
+        );
     }
 
 
-
+    private Optional<Member> findUserId(MemberId memberId) {
+        return memberRepository.findById(memberId);
+    }
 }

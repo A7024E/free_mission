@@ -4,16 +4,13 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "members")
 public class Member {
 
-    @Id
+    @EmbeddedId
     private MemberId id;
     @Embedded
     private Password password;
@@ -49,5 +46,8 @@ public class Member {
 
     public String nickName() {
         return nickName.value();
+    }
+    public String gender(){
+        return Gender.getLabel(gender);
     }
 }

@@ -1,11 +1,13 @@
 package shopping.backend.member.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import shopping.backend.member.dto.MemberInfoResponse;
 import shopping.backend.member.dto.MemberJoinRequest;
 import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
@@ -50,5 +52,11 @@ public class MemberController {
     public ResponseEntity<String> verify(@PathVariable("id") String id, @ModelAttribute MemberVerifyRequest request) {
         memberService.verify(id, request);
         return ResponseEntity.ok("본인 인증이 완료되었습니다");
+    }
+
+    @GetMapping("/info/{id}")
+    public ResponseEntity<MemberInfoResponse> getMyPage(@PathVariable("id") String id) {
+        MemberInfoResponse response = memberService.findMemberInfo(id);
+        return ResponseEntity.ok(response);
     }
 }
