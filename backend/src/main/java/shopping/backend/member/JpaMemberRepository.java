@@ -32,4 +32,9 @@ public class JpaMemberRepository implements MemberRepository {
     public boolean existsByNickName(NickName nickname) {
         return jpaMemberRepository.existsByNickName(nickname);
     }
+
+    @Override
+    public void delete(Member member) {
+        jpaMemberRepository.delete(member);
+    }
 }

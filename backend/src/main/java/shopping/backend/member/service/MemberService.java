@@ -1,6 +1,9 @@
 package shopping.backend.member.service;
 
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import shopping.backend.member.Gender;
 import shopping.backend.member.Member;
@@ -9,6 +12,10 @@ import shopping.backend.member.MemberRepository;
 import shopping.backend.member.NickName;
 import shopping.backend.member.Password;
 import shopping.backend.member.dto.MemberJoinRequest;
+import shopping.backend.member.dto.MemberLoginResponse;
+import shopping.backend.member.dto.MemberUpdateRequest;
+import shopping.backend.member.dto.MemberUpdateResponse;
+import shopping.backend.member.dto.MemberVerifyRequest;
 
 @Service
 @Transactional
@@ -20,11 +27,12 @@ public class MemberService {
     }
 
     public void join(MemberJoinRequest memberJoinRequest) {
+        System.out.println("받은 성별 = '" + memberJoinRequest.gender() + "'");
         if (memberRepository.existsByNickName(new NickName(memberJoinRequest.nickName()))) {
             throw new IllegalArgumentException("중복된 닉네임이 존재합니다");
         }
 
-        if (memberRepository.findById(new MemberId(memberJoinRequest.id())).isPresent()) {
+        if (findUserId(new MemberId(memberJoinRequest.id())).isPresent()) {
             throw new IllegalArgumentException("중복된 아이디가 존재합니다");
         }
 
@@ -38,20 +46,69 @@ public class MemberService {
     }
 
     @Transactional()
-    public Member login(MemberJoinRequest request){
-        MemberId memberId = new MemberId(request.id());
-        Password password = new Password(request.password());
-        Member member = memberRepository.findById(memberId)
+    public MemberLoginResponse login(MemberJoinRequest request) {
+        Member member = memberRepository.findById(new MemberId(request.id()))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        if(!isPasswordMatch(request, password)){
+
+        if (!member.isPasswordMatch(new Password(request.password()))) {
             throw new IllegalArgumentException("패스워드가 틀립니다 다시 확인해주세요");
         }
-        return member;
+        return new MemberLoginResponse(
+                member.Id(), member.nickName()
+        );
     }
 
-    private static boolean isPasswordMatch(MemberJoinRequest request, Password storedPassword) {
-        Password inputPassword = new Password(request.password());
-        return storedPassword.isSame(inputPassword);
+    @Transactional()
+    public MemberUpdateResponse update(String id, MemberUpdateRequest request) {
+        List<String> updatedValues = new ArrayList<>();
+        MemberId memberId = new MemberId(id);
+
+        Member member = findUserId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+
+        if (request.newPassword() != null && !request.newPassword().isBlank()) {
+            member.updatePassword(new Password(request.newPassword()));
+            updatedValues.add("패스워드");
+        }
+
+        if (request.newNickName() != null && !request.newNickName().isBlank()) {
+            NickName newNickName = new NickName(request.newNickName());
+            if (memberRepository.existsByNickName(newNickName)) {
+                throw new IllegalArgumentException("이미 존재하는 닉네임입니다");
+            }
+
+            member.updateNickName(newNickName);
+            updatedValues.add("닉네임");
+        }
+
+        return new MemberUpdateResponse(updatedValues);
     }
+
+    @Transactional()
+    public void delete(String id) {
+        MemberId memberId = new MemberId(id);
+        Member member = findUserId(memberId)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 회원입니다"));
+        memberRepository.delete(member);
+    }
+
+    @Transactional()
+    public void verify(String id,MemberVerifyRequest request) {
+        MemberId memberId = new MemberId(id);
+        Member member = findUserId(memberId)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 회원입니다"));
+
+        Password inputPassword = new Password(request.currentPassword());
+        if(!member.isPasswordMatch(inputPassword)){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+    }
+
+    private Optional<Member> findUserId(MemberId memberId) {
+        return memberRepository.findById(memberId);
+    }
+
+
 
 }

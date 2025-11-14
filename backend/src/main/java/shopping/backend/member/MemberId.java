@@ -28,6 +28,10 @@ public class MemberId {
         }
     }
 
+    public String info() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

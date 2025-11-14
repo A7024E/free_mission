@@ -1,5 +1,6 @@
 package shopping.backend.member;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ public class Member {
     private Password password;
     @Embedded
     private NickName nickName;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     private Gender gender;
 
     protected Member() {}
@@ -30,5 +31,23 @@ public class Member {
         this.gender = gender;
     }
 
+    public boolean isPasswordMatch(Password inputPassword) {
+        return this.password.isSame(inputPassword);
+    }
 
+    public void updatePassword(Password newPassword) {
+        this.password = newPassword;
+    }
+
+    public void updateNickName(NickName newNickName) {
+        this.nickName = newNickName;
+    }
+
+    public String Id() {
+        return id.info();
+    }
+
+    public String nickName() {
+        return nickName.value();
+    }
 }
