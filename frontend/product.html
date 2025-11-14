@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세</title>
+
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .detail-box {
+            width: 900px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 40px;
+        }
+
+        .detail-box img {
+            width: 380px;
+            height: 380px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .info {
+            flex: 1;
+            padding-top: 20px;
+        }
+
+        .info h2 {
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .button-group button {
+            flex: 1;
+            padding: 14px;
+            background: #6a5acd;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .button-group button:hover {
+            background: #5949d6;
+        }
+
+        .button-group .home-btn {
+            background: #555;
+        }
+
+        .button-group .home-btn:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="detail-box">
+    <img id="productImg">
+
+    <div class="info">
+        <h2 id="productName"></h2>
+        <p id="productDescription" style="margin-top:20px; color:#555; line-height:1.5;"></p>
+        <p id="productPrice"></p>
+        <p id="productStock"></p>
+        <p id="productCategory"></p>
+
+        <div class="button-group">
+            <button onclick="alert('구매 기능 아직 안 만들었음!')">구매하기</button>
+            <button class="home-btn" onclick="location.href='index.html'">홈으로</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+
+
+    const productImages = {
+        "3D 고양이": "images/cat.gif",
+        "3D 강아지": "images/dog1.jpeg",
+        "레제 티셔츠": "images/tshirt.jpeg",
+        "레제 쵸커": "images/choker.png",
+        "에어컨": "images/aircon.png",
+        "책상": "images/desk.png"
+    };
+
+
+
+
+
+    async function loadDetail() {
+        const res = await fetch(`http://localhost:8080/products/${productId}`);
+
+        if (!res.ok) {
+            alert("상품을 불러올 수 없습니다.");
+            return;
+        }
+
+        const productResponse = await res.json();
+
+        document.getElementById("productImg").src = productImages[productResponse.name] || "images/default.png";
+        document.getElementById("productDescription").textContent = productResponse.description || "상품 설명이 없습니다.";
+        document.getElementById("productName").textContent = productResponse.name;
+        document.getElementById("productPrice").textContent = `가격: ${productResponse.price.toLocaleString()}원`;
+        document.getElementById("productStock").textContent = `재고: ${productResponse.stock}`;
+        document.getElementById("productCategory").textContent = `카테고리: ${productResponse.category}`;
+    }
+
+    loadDetail();
+</script>
+
+</body>
+</html>

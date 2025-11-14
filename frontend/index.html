@@ -12,6 +12,7 @@
             padding: 0;
         }
 
+        /* 상단 네비게이션 */
         .navbar {
             background: white;
             padding: 15px 30px;
@@ -43,17 +44,40 @@
             text-decoration: underline;
         }
 
+        /* 메인 영역 */
         .container {
             padding: 30px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
+        /* 카테고리 필터 버튼 */
+        .category-bar {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .category-bar button {
+            padding: 10px 16px;
+            background: #6a5acd;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .category-bar button:hover {
+            background: #5844d4;
+        }
+
+        /* 상품 그리드 */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 25px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .product-card {
@@ -63,7 +87,12 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
-            box-sizing: border-box;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
         }
 
         .product-card img {
@@ -80,8 +109,9 @@
         }
 
         .product-card p {
-            margin: 5px 0;
+            margin: 4px 0;
             font-size: 14px;
+            color: #555;
         }
 
         #logoutBtn {
@@ -91,6 +121,7 @@
 </head>
 
 <body>
+
 <div class="navbar">
     <div class="title">간단한 쇼핑몰</div>
 
@@ -102,12 +133,18 @@
     </div>
 </div>
 
-
 <div class="container">
     <h2>🛍 전체 상품</h2>
+
+    <div class="category-bar">
+        <button onclick="loadProducts()">전체</button>
+        <button onclick="loadCategory('동물')">동물</button>
+        <button onclick="loadCategory('옷')">옷</button>
+        <button onclick="loadCategory('사물')">사물</button>
+    </div>
+
     <div id="products" class="product-grid"></div>
 </div>
-
 
 <script>
     const userId = localStorage.getItem("loginUser");
@@ -131,16 +168,9 @@
         window.location.reload();
     });
 
-    async function loadProducts() {
-        const res = await fetch("http://localhost:8080/products");
-
-        if (!res.ok) {
-            alert("상품 정보를 가져올 수 없습니다.");
-            return;
-        }
-
-        const products = await res.json();
+    function renderProducts(products) {
         const grid = document.getElementById("products");
+        grid.innerHTML = "";
 
         const productImages = {
             "3D 고양이": "images/cat.gif",
@@ -157,6 +187,10 @@
 
             const imgSrc = productImages[p.name] || "images/default.png";
 
+            card.addEventListener("click", () => {
+                window.location.href = `product.html?id=${p.id}`;
+            });
+
             card.innerHTML = `
                 <img src="${imgSrc}">
                 <h3>${p.name}</h3>
@@ -169,6 +203,24 @@
         });
     }
 
+    async function loadProducts() {
+        const res = await fetch("http://localhost:8080/products");
+        if (!res.ok) return alert("상품 정보를 가져올 수 없습니다.");
+        renderProducts(await res.json());
+    }
+
+    async function loadCategory(label) {
+        const encoded = encodeURIComponent(label);
+
+        const res = await fetch(`http://localhost:8080/products/category/${encoded}`);
+
+        if (!res.ok) {
+            alert("상품 정보를 가져올 수 없습니다.");
+            return;
+        }
+
+        renderProducts(await res.json());
+    }
     loadProducts();
 </script>
 
