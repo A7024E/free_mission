@@ -1,16 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>간단한 쇼핑몰</title>
+
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        ul {
+            list-style-type: none; /* 점(•) 제거 */
+            padding-left: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #5b4eff;
+            font-size: 18px;
+        }
+
+        a:hover {
+            color: #362fcb;
+        }
+
+        #logoutBtn {
+            margin-top: 20px;
+            padding: 8px 14px;
+            border: 1px solid #333;
+            cursor: pointer;
+            background: white;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
-<h1>{id}님 간단한 쇼핑몰에 오신걸 환영합니다/h1>
-<ul>
-    <li><a href="join.html">회원가입</a></li>
-    <li><a href="login.html">로그인</a></li>
-    <li><a href="update.html">정보수정</a></li>
-    <li><a href="delete.html">회원탈퇴</a></li>
+
+<h1 id="welcomeMessage">간단한 쇼핑몰에 오신 것을 환영합니다!</h1>
+
+<ul id="menuList">
+    <li id="joinMenu"><a href="join.html">회원가입</a></li>
+    <li id="loginMenu"><a href="login.html">로그인</a></li>
+    <li id="updateMenu"><a href="update_varify.html">회원정보 수정</a></li>
+    <li id="deleteMenu"><a href="update_varify.html">회원탈퇴</a></li>
 </ul>
+
+<button id="logoutBtn" style="display:none;">로그아웃</button>
+
+<script>
+    const userId = localStorage.getItem("loginUser");
+    const nickName = localStorage.getItem("nickName");
+
+    const welcomeEl = document.getElementById("welcomeMessage");
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    const joinMenu = document.getElementById("joinMenu");
+    const loginMenu = document.getElementById("loginMenu");
+    const updateMenu = document.getElementById("updateMenu");
+    const deleteMenu = document.getElementById("deleteMenu");
+
+    if (userId) {
+        welcomeEl.textContent = `${nickName}님, 간단한 쇼핑몰에 오신 것을 환영합니다!`;
+        logoutBtn.style.display = "inline-block";
+
+        joinMenu.remove();
+        loginMenu.remove();
+
+    } else {
+        welcomeEl.textContent = "간단한 쇼핑몰에 오신 것을 환영합니다!";
+        logoutBtn.style.display = "none";
+
+        updateMenu.style.display = "none";
+        deleteMenu.style.display = "none";
+    }
+
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("loginUser");
+        alert("로그아웃 되었습니다.");
+        window.location.reload();
+    });
+</script>
+
 </body>
 </html>
