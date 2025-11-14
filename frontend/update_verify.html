@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>본인 확인</title>
 
     <style>
         body {
@@ -13,15 +13,15 @@
             justify-content: center;
         }
         .container {
+            width: 350px;
             background: white;
             padding: 30px;
-            width: 350px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         h2 {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         input {
             width: 100%;
@@ -29,7 +29,6 @@
             margin: 8px 0;
             border: 1px solid #aaa;
             border-radius: 6px;
-            outline: none;
         }
         input:focus {
             border-color: #6a5acd;
@@ -48,63 +47,52 @@
         button:hover {
             background: #5b4dc0;
         }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #555;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
     </style>
-
 </head>
 <body>
 
 <div class="container">
-    <h2>로그인</h2>
+    <h2>비밀번호 확인</h2>
 
-    <form id="loginForm">
-        <input name="id" placeholder="아이디" required>
-        <input name="password" type="password" placeholder="비밀번호" required>
-        <button type="submit">로그인</button>
+    <form id="verifyForm">
+        <p><strong>아이디:</strong> <span id="userId"></span></p>
+        <input type="password" name="currentPassword" placeholder="현재 비밀번호" required>
+        <button type="submit">확인</button>
     </form>
-
-    <a class="back-link" href="join.html">아직 계정이 없으신가요? 회원가입</a>
 </div>
 
 <script>
-    document.querySelector("#loginForm").addEventListener("submit", async (e) => {
+    const userId = localStorage.getItem("loginUser");
+
+    if (!userId) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "login.html";
+    }
+
+    document.getElementById("userId").textContent = userId;
+
+    document.getElementById("verifyForm").addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.target);
 
         try {
-            const res = await fetch("http://localhost:8080/members/login", {
+            const res = await fetch(`http://localhost:8080/members/${userId}/verify`, {
                 method: "POST",
                 body: formData
             });
 
+            const text = await res.text();
+
             if (!res.ok) {
-                const text = await res.text();
-                alert("로그인 실패: " + text);
+                alert(text);
                 return;
             }
 
-            const data = await res.json();
-
-            alert("로그인 성공!");
-
-            localStorage.setItem("loginUser", data.id);
-            localStorage.setItem("nickName", data.nickName);
-
-            window.location.href = "index.html";
+            window.location.href = "update.html";
 
         } catch (err) {
             alert("에러 발생: " + err);
-            console.error(err);
         }
     });
 </script>

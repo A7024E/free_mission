@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 탈퇴</title>
+
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background: #f5f5f5;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 350px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #d9534f;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+        }
+        input:focus {
+            border-color: #6a5acd;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+        button:hover {
+            background: #c9302c;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <h2>회원탈퇴 - 비밀번호 확인</h2>
+
+    <form id="verifyForm">
+        <p><strong>아이디:</strong> <span id="userId"></span></p>
+        <input type="password" name="currentPassword" placeholder="현재 비밀번호" required>
+        <button type="submit">다음</button>
+    </form>
+</div>
+
+<script>
+    const userId = localStorage.getItem("loginUser");
+
+    if (!userId) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "login.html";
+    }
+
+    document.getElementById("userId").textContent = userId;
+
+    document.getElementById("verifyForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        try {
+            const res = await fetch(`http://localhost:8080/members/${userId}/verify`, {
+                method: "POST",
+                body: formData
+            });
+
+            const text = await res.text();
+
+            if (!res.ok) {
+                alert(text);
+                return;
+            }
+
+            const confirmDel = confirm("정말 회원을 탈퇴하시겠습니까?");
+            if (!confirmDel) return;
+
+            const delRes = await fetch(`http://localhost:8080/members/${userId}/delete`, {
+                method: "POST"
+            });
+
+            if (!delRes.ok) {
+                alert("탈퇴 실패");
+                return;
+            }
+
+            alert("회원 탈퇴가 완료되었습니다.");
+
+            localStorage.removeItem("loginUser");
+            localStorage.removeItem("nickName");
+
+            window.location.href = "index.html";
+
+        } catch (err) {
+            alert("에러 발생: " + err);
+        }
+    });
+</script>
+
+</body>
+</html>
