@@ -19,13 +19,23 @@
     document.querySelector("#joinForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const fd = new FormData(e.target);
-        const res = await fetch("http://localhost:8080/members/join", {
-            method: "POST",
-            body: fd
-        });
 
-        if (res.ok) {
-            location.replace("/index.html")
+        try {
+            const res = await fetch("http://localhost:8080/members/join", {
+                method: "POST",
+                body: fd
+            });
+
+            const text = await res.text();
+            alert("응답: " + text);
+
+            if (res.ok) {
+                window.location.href = "index.html";
+            }
+
+        } catch (err) {
+            alert("에러 발생: " + err);
+            console.error(err);
         }
     });
 </script>
