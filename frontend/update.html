@@ -5,24 +5,50 @@
 <h2>회원 정보 수정</h2>
 
 <form id="updateForm">
-    <input name="id" placeholder="수정할 회원 ID" required><br>
-    <input name="nickName" placeholder="새 닉네임"><br>
-    <input name="password" type="password" placeholder="새 비밀번호"><br><br>
+    <input name="newNickName" placeholder="새 닉네임"><br>
+    <input name="newPassword" type="password" placeholder="새 비밀번호"><br><br>
     <button type="submit">수정하기</button>
 </form>
 
 <script>
-    document.querySelector("#updateForm").addEventListener("submit", async (e) => {
+    const userId = localStorage.getItem("loginUser");
+    console.log("userId =", userId);
+
+    if (!userId) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "login.html";
+    }
+
+    document.getElementById("updateForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
-        const id = fd.get("id");
+        const formData = new FormData(e.target);
 
-        const res = await fetch(`http://localhost:8080/members/${id}/update`, {
-            method: "POST",
-            body: fd
-        });
+        try {
+            const res = await fetch(`http://localhost:8080/members/${userId}/update`, {
+                method: "POST",
+                body: formData
+            });
 
-        alert(await res.text());
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "수정 실패: 서버 오류");
+                return;
+            }
+
+            if (data.updatedFields.includes("닉네임")) {
+                const newNickName = formData.get("newNickName"); // 입력값 그대로 가져오기
+                if (newNickName && newNickName.trim() !== "") {
+                    localStorage.setItem("nickName", newNickName);
+                }
+            }
+
+            alert(`${data.updatedFields.join(", ")} 수정 완료!`);
+            window.location.href = "index.html";
+
+        } catch (err) {
+            alert("에러 발생: " + err);
+        }
     });
 </script>
 
