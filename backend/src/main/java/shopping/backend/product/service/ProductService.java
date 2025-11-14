@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import shopping.backend.product.dto.ProductListResponse;
 import shopping.backend.product.dto.ProductPageResponse;
+import shopping.backend.product.model.Category;
 import shopping.backend.product.model.Product;
 import shopping.backend.product.repository.ProductRepository;
 
@@ -41,4 +42,14 @@ public class ProductService {
                 product.description()
         );
     }
+
+    public List<ProductListResponse> findByCategory(String categoryLabel) {
+        Category category = Category.ofLabel(categoryLabel);
+        return productRepository.findByCategory(category).stream()
+                .map(product -> new ProductListResponse(
+                        product.id(), product.name(), product.price(), product.stock(), product.category()
+                )).toList();
+    }
+
+
 }

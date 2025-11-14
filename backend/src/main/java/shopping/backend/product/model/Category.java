@@ -1,5 +1,7 @@
 package shopping.backend.product.model;
 
+import java.util.Arrays;
+
 public enum Category {
     CLOTHES("옷"),
     ANIMAL("동물"),
@@ -17,11 +19,9 @@ public enum Category {
 
 
     public static Category ofLabel(String label) {
-        for (Category category : values()) {
-            if (category.label.equals(label)) {
-                return category;
-            }
-        }
-        throw new IllegalArgumentException("잘못된 카테고리입니다.");
+        return Arrays.stream(values())
+                .filter(category -> category.label.equals(label))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 카테고리"));
     }
 }
