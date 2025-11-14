@@ -23,7 +23,8 @@ public class ProductService {
                                 product.name(),
                                 product.price(),
                                 product.stock(),
-                                product.category())
+                                product.category()
+                        )
                 ).toList();
     }
 
@@ -36,7 +37,8 @@ public class ProductService {
                 product.name(),
                 product.price(),
                 product.stock(),
-                product.category()
+                product.category(),
+                product.description()
         );
     }
 }

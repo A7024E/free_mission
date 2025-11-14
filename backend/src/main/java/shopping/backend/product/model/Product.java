@@ -27,12 +27,15 @@ public class Product {
     private Stock stock;
     @Enumerated(EnumType.STRING)
     private Category category;
+    @Embedded
+    private Description description;
 
-    public Product(ProductName productName, Price price, Stock stock, Category category) {
+    public Product(ProductName productName, Price price, Stock stock, Category category, Description description) {
         this.productName = productName;
         this.price = price;
         this.stock = stock;
         this.category = category;
+        this.description = description;
     }
 
     protected Product() {
@@ -56,6 +59,10 @@ public class Product {
 
     public Long id() {
         return id;
+    }
+
+    public String description() {
+        return description.getDescription();
     }
 
     @Override
