@@ -15,12 +15,24 @@
         e.preventDefault();
         const fd = new FormData(e.target);
 
-        const res = await fetch("http://localhost:8080/members/login", {
-            method: "POST",
-            body: fd
-        });
+        const id = fd.get("id"); // 입력한 아이디
 
-        alert(await res.text());
+        try {
+            const res = await fetch("http://localhost:8080/members/login", {
+                method: "POST",
+                body: fd
+            });
+
+            const message = await res.text();
+            alert(message);
+
+            if (res.ok) {
+                localStorage.setItem("loginUser", id);
+                window.location.href = "index.html";
+            }
+        } catch (err) {
+            alert("에러: " + err);
+        }
     });
 </script>
 
