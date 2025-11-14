@@ -2,14 +2,33 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>회원 탈퇴 - 본인 확인</title>
+    <title>회원탈퇴 - 본인 확인</title>
+    <style>
+        body { font-family: "Noto Sans KR", sans-serif; padding: 40px; }
+        h1 { margin-bottom: 20px; }
+        input {
+            display: block;
+            margin-bottom: 12px;
+            padding: 8px;
+            width: 230px;
+        }
+        button {
+            padding: 8px 16px;
+            border: 1px solid #333;
+            background: white;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
 
-<h2>본인 확인</h2>
+<h1>회원탈퇴 - 비밀번호 확인</h1>
+
+<p><strong>아이디:</strong> <span id="userId"></span></p>
 
 <form id="verifyForm">
-    <input name="password" type="password" placeholder="비밀번호 입력" required><br><br>
+    <input type="password" name="currentPassword" placeholder="현재 비밀번호 입력" required>
     <button type="submit">확인</button>
 </form>
 
@@ -21,44 +40,53 @@
         window.location.href = "login.html";
     }
 
+    document.getElementById("userId").textContent = userId;
+
     document.getElementById("verifyForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
 
-        // 1) 비밀번호 검증
-        const verifyRes = await fetch(`http://localhost:8080/members/${userId}/verify`, {
-            method: "POST",
-            body: fd
-        });
+        const formData = new FormData(e.target);
 
-        const verifyMsg = await verifyRes.text();
+        try {
+            const res = await fetch(`http://localhost:8080/members/${userId}/verify`, {
+                method: "POST",
+                body: formData
+            });
 
-        if (!verifyRes.ok) {
-            alert(verifyMsg); // 비밀번호 틀림
-            return;
+            const text = await res.text();
+
+            if (!res.ok) {
+                alert(text);
+                return;
+            }
+
+            const confirmDelete = confirm("정말 탈퇴하시겠습니까?");
+            if (!confirmDelete) {
+                alert("탈퇴가 취소되었습니다.");
+                return;
+            }
+
+            const deleteRes = await fetch(`http://localhost:8080/members/${userId}/delete`, {
+                method: "POST"
+            });
+
+            const deleteText = await deleteRes.text();
+
+            if (!deleteRes.ok) {
+                alert(deleteText);
+                return;
+            }
+
+            alert("회원 탈퇴가 완료되었습니다.");
+
+            localStorage.removeItem("loginUser");
+            localStorage.removeItem("nickName");
+
+            window.location.href = "index.html";
+
+        } catch (err) {
+            alert("에러 발생: " + err);
         }
-
-        // 2) 탈퇴 요청 진행
-        const deleteRes = await fetch(`http://localhost:8080/members/${userId}/delete`, {
-            method: "POST",
-            body: fd // 여기서는 비밀번호 필요없어도 FormData 유지 OK
-        });
-
-        const deleteMsg = await deleteRes.text();
-
-        if (!deleteRes.ok) {
-            alert(deleteMsg);
-            return;
-        }
-
-        // 성공 시
-        alert("회원 탈퇴가 완료되었습니다.");
-
-        // 로그인 정보 삭제
-        localStorage.removeItem("loginUser");
-
-        // index로 이동
-        window.location.href = "index.html";
     });
 </script>
 

@@ -23,11 +23,11 @@
 
     document.getElementById("verifyForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
+        const formData = new FormData(e.target);
 
         const res = await fetch(`http://localhost:8080/members/${userId}/verify`, {
             method: "POST",
-            body: fd
+            body: formData
         });
 
         const message = await res.text();

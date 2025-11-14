@@ -37,7 +37,7 @@
             }
 
             if (data.updatedFields.includes("닉네임")) {
-                const newNickName = formData.get("newNickName"); // 입력값 그대로 가져오기
+                const newNickName = formData.get("newNickName");
                 if (newNickName && newNickName.trim() !== "") {
                     localStorage.setItem("nickName", newNickName);
                 }

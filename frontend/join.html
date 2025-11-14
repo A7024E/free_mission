@@ -18,12 +18,12 @@
 <script>
     document.querySelector("#joinForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
+        const formData = new FormData(e.target);
 
         try {
             const res = await fetch("http://localhost:8080/members/join", {
                 method: "POST",
-                body: fd
+                body: formData
             });
 
             const text = await res.text();
