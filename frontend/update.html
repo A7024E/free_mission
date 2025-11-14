@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>정보수정</title></head>
+<body>
+<h2>회원 정보 수정</h2>
+
+<form id="updateForm">
+    <input name="id" placeholder="수정할 회원 ID" required><br>
+    <input name="nickName" placeholder="새 닉네임"><br>
+    <input name="password" type="password" placeholder="새 비밀번호"><br><br>
+    <button type="submit">수정하기</button>
+</form>
+
+<script>
+    document.querySelector("#updateForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const id = fd.get("id");
+
+        const res = await fetch(`http://localhost:8080/members/${id}/update`, {
+            method: "POST",
+            body: fd
+        });
+
+        alert(await res.text());
+    });
+</script>
+
+</body>
+</html>

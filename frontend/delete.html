@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>회원탈퇴</title></head>
+<body>
+<h2>회원 삭제</h2>
+
+<form id="deleteForm">
+    <input name="id" placeholder="삭제할 회원 ID" required><br>
+    <input name="password" type="password" placeholder="비밀번호" required><br><br>
+    <button type="submit">탈퇴하기</button>
+</form>
+
+<script>
+    document.querySelector("#deleteForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const id = fd.get("id");
+
+        const res = await fetch(`http://localhost:8080/members/${id}/delete`, {
+            method: "POST",
+            body: fd
+        });
+
+        alert(await res.text());
+    });
+</script>
+
+</body>
+</html>

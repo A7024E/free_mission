@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>로그인</title></head>
+<body>
+<h2>로그인</h2>
+
+<form id="loginForm">
+    <input name="id" placeholder="ID" required><br>
+    <input name="password" type="password" placeholder="비밀번호" required><br><br>
+    <button type="submit">로그인</button>
+</form>
+
+<script>
+    document.querySelector("#loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+
+        const res = await fetch("http://localhost:8080/members/login", {
+            method: "POST",
+            body: fd
+        });
+
+        alert(await res.text());
+    });
+</script>
+
+</body>
+</html>
