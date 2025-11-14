@@ -1,4 +1,4 @@
-package shopping.backend.member;
+package shopping.backend.member.model;
 
 public enum Gender {
     MALE("남자"),

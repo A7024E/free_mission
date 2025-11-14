@@ -1,4 +1,4 @@
-package shopping.backend.member;
+package shopping.backend.member.model;
 
 import jakarta.persistence.AttributeConverter;
 
