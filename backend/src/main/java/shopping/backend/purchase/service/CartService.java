@@ -3,21 +3,33 @@ package shopping.backend.purchase.service;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Service;
-import shopping.backend.product.repository.ProductRepository;
-import shopping.backend.product.service.ProductService;
+import shopping.backend.purchase.model.Carts;
 
 @Service
 public class CartService {
-    private final Map<Long,Integer> cart = new HashMap<>();
-    private final ProductRepository productRepository;
+    private final Map<String, Carts> carts = new HashMap<>();
 
-    public CartService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    private Carts findCarts(String memberId){
+        return carts.computeIfAbsent(memberId, id -> new Carts());
     }
 
-    public void add(Long productId, int quantity) {
-        cart.put(productId, cart.getOrDefault(productId, 0) + quantity);
+    public void addItem(String memberId, Long productId, int quantity) {
+        findCarts(memberId).add(productId, quantity);
     }
 
+    public void updateItem(String memberId, Long productId, int quantity) {
+        findCarts(memberId).update(productId, quantity);
+    }
 
+    public void removeItem(String memberId, Long productId, int quantity) {
+        findCarts(memberId).remove(productId);
+    }
+
+    public void clearCarts(String memberId) {
+        carts.clear();
+    }
+
+    public Object getItems(String memberId) {
+        return findCarts(memberId).getItems();
+    }
 }
