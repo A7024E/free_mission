@@ -1,8 +1,7 @@
-package shopping.backend.member;
+package shopping.backend.member.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Id;
 import java.util.Objects;
 
 @Embeddable
