@@ -224,18 +224,27 @@
         renderProducts(products);
     }
 
-    async function searchProducts() {
+
+    async function search() {
         const keyword = document.getElementById("searchInput").value;
 
-        if (!keyword) {
+        if (!keyword.trim()) {
             await loadProducts();
             return;
         }
 
-        const res = await fetch(`http://localhost:8080/products/search?keyword=${encodeURIComponent(keyword)}`)
+        const res = await fetch(`http://localhost:8080/products/search?keyword=${encodeURIComponent(keyword)}`);
         const products = await res.json();
+
         renderProducts(products);
     }
+
+    document.getElementById("searchInput").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            search();
+        }
+    });
     loadProducts();
 </script>
 
