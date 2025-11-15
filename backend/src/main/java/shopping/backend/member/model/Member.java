@@ -18,6 +18,8 @@ public class Member {
     private NickName nickName;
     @Convert(converter = GenderConverter.class)
     private Gender gender;
+    @Embedded
+    private Point point;
 
     protected Member() {}
 
@@ -26,6 +28,7 @@ public class Member {
         this.password = password;
         this.nickName = nickName;
         this.gender = gender;
+        this.point = new Point(50000);
     }
 
     public boolean isPasswordMatch(Password inputPassword) {
@@ -49,5 +52,12 @@ public class Member {
     }
     public String gender(){
         return Gender.getLabel(gender);
+    }
+    public int remain() {
+        return point.remain();
+    }
+
+    public void usePoint(int amount) {
+       this.point.minus(amount);
     }
 }
