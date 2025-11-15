@@ -22,9 +22,9 @@ public class Password {
     }
 
     private void validate(String password){
-//        if(password.length() < 8){
-//            throw new IllegalArgumentException("패스워드는 8자리로 입력해야합니다");
-//        }
+        if(password.length() < 8){
+            throw new IllegalArgumentException("패스워드는 9자리 이상으로 입력해야합니다");
+        }
 
         if(password == null || password.isEmpty()){
             throw new IllegalArgumentException("패스워드는 공백이 될 수 없습니다");
