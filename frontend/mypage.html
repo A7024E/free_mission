@@ -70,6 +70,7 @@
     <div class="info-box"><span>아이디:</span> <span id="id"></span></div>
     <div class="info-box"><span>닉네임:</span> <span id="nickName"></span></div>
     <div class="info-box"><span>성별:</span> <span id="gender"></span></div>
+    <div class="info-box"><span>남은포인트: </span> <span id="point"></span></div>
 
     <button onclick="location.href='update_verify.html'">회원정보 수정</button>
     <button class="danger" onclick="location.href='delete_verify.html'">회원탈퇴</button>
@@ -97,6 +98,7 @@
         document.getElementById("id").textContent = data.id;
         document.getElementById("nickName").textContent = data.nickName;
         document.getElementById("gender").textContent = data.gender;
+        document.getElementById("point").textContent = data.point;
     }
 
     loadInfo();

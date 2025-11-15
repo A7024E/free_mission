@@ -49,7 +49,6 @@
             margin: 0 auto;
         }
 
-        /* 🔍 검색창 스타일 */
         .search-box {
             margin-top: 10px;
             display: flex;
@@ -104,7 +103,7 @@
             background: white;
             border-radius: 12px;
             padding: 16px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
@@ -127,17 +126,36 @@
             margin: 5px 0;
             font-size: 14px;
         }
+
+        .title {
+            cursor: pointer;
+        }
+
+        .cart-btn {
+            margin-top: 10px;
+            padding: 10px;
+            background: #6a5acd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .cart-btn:hover {
+            background: #5949d6;
+        }
     </style>
 </head>
 
 <body>
 <div class="navbar">
-    <div class="title">간단한 쇼핑몰</div>
+    <div class="title" onclick="location.href='index.html'">간단한 쇼핑몰</div>
 
     <div class="menu">
         <a id="joinMenu" href="join.html">회원가입</a>
         <a id="loginMenu" href="login.html">로그인</a>
         <a id="mypageMenu" href="mypage.html" style="display:none;">마이페이지</a>
+        <a href="cart.html">장바구니</a>
         <button id="logoutBtn" style="display:none;">로그아웃</button>
     </div>
 </div>
@@ -145,7 +163,7 @@
 <div class="container">
 
     <div class="search-box">
-        <input id="searchInput" type="text" placeholder="상품 검색..." />
+        <input id="searchInput" type="text" placeholder="상품 검색..."/>
         <button onclick="searchProducts()">검색</button>
     </div>
 
@@ -158,6 +176,7 @@
 
     <h2>🛍 상품 목록</h2>
     <div id="products" class="product-grid"></div>
+
 </div>
 
 
@@ -181,8 +200,8 @@
         "3D 강아지": "images/dog.jpg",
         "레제 티셔츠": "images/tshirt.jpeg",
         "레제 쵸커": "images/choker.png",
-        "에어컨": "images/aircon.png",
-        "책상": "images/desk.png"
+        "에어컨": "images/aircon.jpeg",
+        "책상": "images/desk.jpeg"
     };
 
     function renderProducts(products) {
@@ -206,6 +225,7 @@
                 <p>가격: ${p.price.toLocaleString()}원</p>
                 <p>재고: ${p.stock}</p>
                 <p>카테고리: ${p.category}</p>
+                <button class="cart-btn" onclick="addToCart(${p.id}, 1); event.stopPropagation();">구매</button>
             `;
 
             grid.appendChild(card);
@@ -228,7 +248,7 @@
     async function search() {
         const keyword = document.getElementById("searchInput").value;
 
-        if (!keyword.trim()) {
+        if (!keyword) {
             await loadProducts();
             return;
         }
