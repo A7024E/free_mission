@@ -30,7 +30,7 @@ public class Point {
 
     public void minus(int amount) {
         if (point < amount) {
-            throw new IllegalArgumentException("포인트 부족");
+            throw new IllegalArgumentException("포인트 부족가 부족합니다");
         }
         this.point -= amount;
     }
