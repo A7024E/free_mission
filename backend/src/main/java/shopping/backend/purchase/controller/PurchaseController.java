@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import shopping.backend.purchase.dto.CartPurchaseAllRequest;
+import shopping.backend.purchase.dto.CartPurchaseAllResponse;
 import shopping.backend.purchase.dto.PurchaseRequest;
 import shopping.backend.purchase.dto.PurchaseResponse;
 import shopping.backend.purchase.service.PurchaseService;
@@ -21,5 +23,12 @@ public class PurchaseController {
     @PostMapping
     public ResponseEntity<PurchaseResponse> purchase(@RequestBody PurchaseRequest purchaseRequest) {
         return ResponseEntity.ok(purchaseService.purchase(purchaseRequest));
+    }
+
+    @PostMapping("/all")
+    public ResponseEntity<CartPurchaseAllResponse> purchaseAll(
+            @RequestBody CartPurchaseAllRequest request
+    ) {
+        return ResponseEntity.ok(purchaseService.purchaseAll(request));
     }
 }
