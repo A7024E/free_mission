@@ -19,9 +19,6 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
         .navbar .title {
@@ -37,10 +34,6 @@
             padding: 30px;
             border-radius: 14px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-        }
-
-        h2 {
-            margin-bottom: 20px;
         }
 
         .cart-item {
@@ -62,10 +55,6 @@
             flex: 1;
         }
 
-        .item-info h3 {
-            margin: 0 0 10px;
-        }
-
         .quantity-box {
             display: flex;
             align-items: center;
@@ -80,18 +69,6 @@
             color: white;
             border-radius: 4px;
             cursor: pointer;
-        }
-
-        .quantity-box span {
-            font-size: 16px;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: red;
-            cursor: pointer;
-            font-size: 14px;
         }
 
         .total-box {
@@ -115,16 +92,20 @@
             cursor: pointer;
         }
 
-        .purchase-btn:hover {
-            background: #5545d4;
-        }
-
         .empty-text {
             padding: 40px 0;
             text-align: center;
             font-size: 18px;
             color: #777;
         }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -137,11 +118,11 @@
     <h2>🛒 장바구니</h2>
 
     <div id="cartItems"></div>
-
-    <div class="total-box" id="totalBox">총합: 0원</div>
+    <div id="totalBox" class="total-box">총합: 0원</div>
 
     <button class="purchase-btn" onclick="purchaseAll()">전체 구매하기</button>
 </div>
+
 
 <script>
 
@@ -154,25 +135,36 @@
         "책상": "images/desk.jpeg"
     };
 
-    function loadCart() {
-        const userId = localStorage.getItem("loginUser");  // ★ 로그인 유저
-        const cartKey = `cart_${userId}`;                 // ★ 사용자별 cart key
-        const cart = JSON.parse(localStorage.getItem(cartKey)) || {};  // ★ user cart 가져오기
+    async function loadMyPoint() {
+        const userId = localStorage.getItem("loginUser");
+        if (!userId) return 0;
+
+        const res = await fetch(`http://localhost:8080/members/info/${userId}`);
+        if (!res.ok) return 0;
+
+        const member = await res.json();
+        return member.point;
+    }
+
+    async function loadCart() {
+        const userId = localStorage.getItem("loginUser");
+        const cartKey = `cart_${userId}`;
+
+        const cart = JSON.parse(localStorage.getItem(cartKey)) || {};
 
         const container = document.getElementById("cartItems");
-
         container.innerHTML = "";
 
         const ids = Object.keys(cart);
         if (ids.length === 0) {
             container.innerHTML = `<p class="empty-text">장바구니가 비어있습니다.</p>`;
-            document.getElementById("totalBox").textContent = "총합: 0원";
+            document.getElementById("totalBox").innerHTML = "총합: 0원";
             return;
         }
 
         let total = 0;
 
-        ids.forEach(async productId => {
+        for (const productId of ids) {
             const quantity = cart[productId];
 
             const res = await fetch(`http://localhost:8080/products/${productId}`);
@@ -186,30 +178,42 @@
             item.className = "cart-item";
 
             item.innerHTML = `
-            <img src="${imgSrc}">
-            <div class="item-info">
-                <h3>${product.name}</h3>
-                <p>${product.price.toLocaleString()}원</p>
-                <div class="quantity-box">
-                    <button onclick="changeQty(${productId}, -1)">-</button>
-                    <span>${quantity}</span>
-                    <button onclick="changeQty(${productId}, 1)">+</button>
+                <img src="${imgSrc}">
+                <div class="item-info">
+                    <h3>${product.name}</h3>
+                    <p>${product.price.toLocaleString()}원</p>
+                    <div class="quantity-box">
+                        <button onclick="changeQty(${productId}, -1)">-</button>
+                        <span>${quantity}</span>
+                        <button onclick="changeQty(${productId}, 1)">+</button>
+                    </div>
                 </div>
-            </div>
-            <button class="delete-btn" onclick="removeItem(${productId})">삭제</button>
-        `;
+                <button class="delete-btn" onclick="removeItem(${productId})">삭제</button>
+            `;
 
             container.appendChild(item);
-        });
+        }
 
-        document.getElementById("totalBox").textContent = `총합: ${total.toLocaleString()}원`;
+        const myPoint = await loadMyPoint();
+        const remaining = myPoint - total;
+
+
+        document.getElementById("totalBox").innerHTML = `
+            보유 포인트 : ${myPoint.toLocaleString()}원<br>
+            총합 : ${total.toLocaleString()}원<br>
+            ------------------------------------------------<br>
+            나머지 포인트 : ${remaining.toLocaleString()}원<br>
+            <span style="color:${total > myPoint ? "red" : "green"};">
+                ${total > myPoint ? "포인트 부족" : "구매 가능"}
+            </span>
+        `;
     }
 
     function changeQty(productId, diff) {
         const userId = localStorage.getItem("loginUser");
         const cartKey = `cart_${userId}`;
-
         const cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+
         if (!cart[productId]) return;
 
         cart[productId] += diff;
@@ -224,19 +228,20 @@
     function removeItem(productId) {
         const userId = localStorage.getItem("loginUser");
         const cartKey = `cart_${userId}`;
-
         const cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+
         delete cart[productId];
 
         localStorage.setItem(cartKey, JSON.stringify(cart));
         loadCart();
     }
 
-    function purchaseAll() {
-        alert("구매 기능 준비 중!");
+    async function purchaseAll() {
+        alert("전체 구매 기능은 백엔드 연동 중입니다!");
     }
 
     loadCart();
+
 </script>
 
 </body>
