@@ -8,6 +8,9 @@ import shopping.backend.member.model.MemberId;
 import shopping.backend.member.model.MemberRepository;
 import shopping.backend.product.model.Product;
 import shopping.backend.product.repository.ProductRepository;
+import shopping.backend.purchase.dto.CartPurchaseAllRequest;
+import shopping.backend.purchase.dto.CartPurchaseAllResponse;
+import shopping.backend.purchase.dto.PurchaseItem;
 import shopping.backend.purchase.dto.PurchaseRequest;
 import shopping.backend.purchase.dto.PurchaseResponse;
 
@@ -48,6 +51,39 @@ public class PurchaseService {
                 member.remain(),
                 product.stock()
         );
+    }
+
+    @Transactional
+    public CartPurchaseAllResponse purchaseAll(CartPurchaseAllRequest request) {
+
+        Member member = memberRepository.findById(new MemberId(request.memberId()))
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
+
+        int totalPrice = 0;
+
+        for (PurchaseItem item : request.items()) {
+            Product product = productRepository.findById(item.productId())
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+
+            if (product.stock() < item.quantity()) {
+                throw new IllegalArgumentException("재고가 부족한 상품이 있습니다: " + product.name());
+            }
+
+            totalPrice += product.price() * item.quantity();
+        }
+
+        if (member.remain() < totalPrice) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+
+        for (PurchaseItem item : request.items()) {
+            Product product = productRepository.findById(item.productId()).get();
+            product.decreaseStock(item.quantity());
+        }
+
+        member.usePoint(totalPrice);
+
+        return new CartPurchaseAllResponse(totalPrice, member.remain());
     }
 
     private Optional<Member> findMemberId(PurchaseRequest request) {

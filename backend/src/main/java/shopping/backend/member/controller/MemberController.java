@@ -13,6 +13,8 @@ import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
 import shopping.backend.member.dto.MemberUpdateResponse;
 import shopping.backend.member.dto.MemberVerifyRequest;
+import shopping.backend.member.model.Member;
+import shopping.backend.member.model.MemberId;
 import shopping.backend.member.service.MemberService;
 
 @RestController
@@ -59,4 +61,5 @@ public class MemberController {
         MemberInfoResponse response = memberService.findMemberInfo(id);
         return ResponseEntity.ok(response);
     }
+
 }
