@@ -65,6 +65,10 @@ public class Product {
         return description.getDescription();
     }
 
+    public void decreaseStock(int amount) {
+        this.stock.minus(amount);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Product product)) {

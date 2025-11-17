@@ -13,6 +13,8 @@ import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
 import shopping.backend.member.dto.MemberUpdateResponse;
 import shopping.backend.member.dto.MemberVerifyRequest;
+import shopping.backend.member.model.Member;
+import shopping.backend.member.model.MemberId;
 import shopping.backend.member.service.MemberService;
 
 @RestController
@@ -27,7 +29,7 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity<String> join(@ModelAttribute MemberJoinRequest memberRequest) {
         memberService.join(memberRequest);
-        return ResponseEntity.ok("회원가입 완료");
+        return ResponseEntity.ok("회원가입 완료 50000 포인트 적립");
     }
 
     @PostMapping("/login")
@@ -59,4 +61,5 @@ public class MemberController {
         MemberInfoResponse response = memberService.findMemberInfo(id);
         return ResponseEntity.ok(response);
     }
+
 }

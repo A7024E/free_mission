@@ -42,6 +42,7 @@ public class MemberService {
                 new NickName(memberJoinRequest.nickName()),
                 Gender.ofLabel(memberJoinRequest.gender())
         );
+
         memberRepository.save(member);
     }
 
@@ -112,7 +113,8 @@ public class MemberService {
         return new MemberInfoResponse(
                 member.Id(),
                 member.nickName(),
-                member.gender()
+                member.gender(),
+                member.remain()
         );
     }
 
