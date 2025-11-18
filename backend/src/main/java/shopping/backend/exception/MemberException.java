@@ -15,6 +15,8 @@ public enum MemberException {
 
     EXCEPTION_VALID_CHOICE_GENDER("올바른 성별이 아닙니다."),
 
+    EXCEPTION_VALID_POINT_NEGATIVE("포인트는 음수가 될 수 없습니다."),
+    EXCEPTION_VALID_POINT_LACK("포인트 부족가 부족합니다")
     ;
 
 
