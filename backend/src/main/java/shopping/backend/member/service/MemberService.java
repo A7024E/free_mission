@@ -92,10 +92,11 @@ public class MemberService {
     public void verify(String id, MemberVerifyRequest request) {
         Member member = findMemberOrThrow(id);
 
-        if (!member.isPasswordMatch(new Password(request.currentPassword()))) {
+        if (isPasswordValid(request, member)) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_PASSWORD_NOT_MATCH.message());
         }
     }
+
 
     @Transactional
     public MemberInfoResponse findMemberInfo(String id) {
@@ -120,8 +121,7 @@ public class MemberService {
 
     private Member findMemberOrThrow(String id) {
         MemberId memberId = new MemberId(id);
-        Member member = findMemberById(findUserId(memberId));
-        return member;
+        return findMemberById(findUserId(memberId));
     }
 
     private void validateDuplicate(MemberJoinRequest memberJoinRequest) {
@@ -132,5 +132,9 @@ public class MemberService {
         if (findUserId(new MemberId(memberJoinRequest.id())).isPresent()) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_DUPLICATE_ID.message());
         }
+    }
+
+    private static boolean isPasswordValid(MemberVerifyRequest request, Member member) {
+        return !member.isPasswordMatch(new Password(request.currentPassword()));
     }
 }
