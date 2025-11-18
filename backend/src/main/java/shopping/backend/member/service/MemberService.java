@@ -22,6 +22,10 @@ import shopping.backend.member.dto.MemberVerifyRequest;
 @Service
 @Transactional
 public class MemberService {
+
+    private static final String UPDATE_RESULTS_VALUE_NICKNAME = "닉네임";
+    private static final String UPDATE_RESULTS_VALUE_PASSWORD = "패스워드";
+
     private final MemberRepository memberRepository;
 
     public MemberService(MemberRepository memberRepository) {
@@ -71,7 +75,7 @@ public class MemberService {
 
         if (request.newPassword() != null && !request.newPassword().isBlank()) {
             member.updatePassword(new Password(request.newPassword()));
-            updatedValues.add("패스워드");
+            updatedValues.add(UPDATE_RESULTS_VALUE_PASSWORD);
         }
 
         if (request.newNickName() != null && !request.newNickName().isBlank()) {
@@ -82,7 +86,7 @@ public class MemberService {
             }
 
             member.updateNickName(newNickName);
-            updatedValues.add("닉네임");
+            updatedValues.add(UPDATE_RESULTS_VALUE_NICKNAME);
         }
 
         return new MemberUpdateResponse(updatedValues);
