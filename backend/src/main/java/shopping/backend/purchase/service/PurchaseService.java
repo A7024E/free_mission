@@ -29,37 +29,26 @@ public class PurchaseService {
     }
 
     public PurchaseResponse purchase(PurchaseRequest request) {
-        Member member = findMemberId(request)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        Member member = findMemberId(request.memberId());
+        Product product = findProductId(request);
 
-        Product product = productRepository.findById(request.productId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        ProductException.EXCEPTION_VALID_NOT_FOUND_PRODUCT.message()));
 
-        int quantity = request.quantity();
-        int totalPoint = product.price() * quantity;
+        validateEnoughPoint(member, product.price() * request.quantity());
+        validateStock(product, request.quantity());
 
-        if (member.remain() < totalPoint) {
-            throw new IllegalArgumentException(PurchaseException.EXCEPTION_INVALID_ENOUGH_POINT.message());
-        }
-
-        if (product.stock() < quantity) {
-            throw new IllegalArgumentException(PurchaseException.EXCEPTION_INVALID_ENOUGH_INVENTORY.message());
-        }
-
-        member.usePoint(totalPoint);
-        product.decreaseStock(quantity);
+        member.usePoint(product.price() * request.quantity());
+        product.decreaseStock(request.quantity());
 
         return new PurchaseResponse(
                 member.Id(),
                 product.id(),
-                quantity,
-                totalPoint,
+                request.quantity(),
+                product.price() * request.quantity(),
                 member.remain(),
                 product.stock()
         );
     }
+
 
     @Transactional
     public CartPurchaseAllResponse purchaseAll(CartPurchaseAllRequest request) {
@@ -96,7 +85,32 @@ public class PurchaseService {
         return new CartPurchaseAllResponse(totalPrice, member.remain());
     }
 
-    private Optional<Member> findMemberId(PurchaseRequest request) {
-        return memberRepository.findById(new MemberId(request.memberId()));
+    private Member findMemberId(String memberId) {
+        return memberRepository.findById(new MemberId(memberId))
+                .orElseThrow(() -> new IllegalArgumentException(
+                        MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()
+                ));
+    }
+
+    private Product findProductId(PurchaseRequest request) {
+        return productRepository.findById(request.productId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        ProductException.EXCEPTION_VALID_NOT_FOUND_PRODUCT.message()));
+    }
+
+    private void validateEnoughPoint(Member member, int required) {
+        if (member.remain() < required) {
+            throw new IllegalArgumentException(
+                    PurchaseException.EXCEPTION_INVALID_ENOUGH_POINT.message()
+            );
+        }
+    }
+
+    private void validateStock(Product product, int required) {
+        if (product.stock() < required) {
+            throw new IllegalArgumentException(
+                    PurchaseException.EXCEPTION_INVALID_ENOUGH_INVENTORY.message()
+            );
+        }
     }
 }
