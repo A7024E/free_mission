@@ -237,7 +237,41 @@
     }
 
     async function purchaseAll() {
-        alert("전체 구매 기능은 백엔드 연동 중입니다!");
+        const memberId = localStorage.getItem("loginUser");
+        if (!memberId) {
+            alert("로그인이 필요합니다!");
+            location.href = "login.html";
+            return;
+        }
+
+        const cartKey = `cart_${memberId}`;
+        const cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+
+        const items = Object.entries(cart).map(([productId, quantity]) => ({
+            productId: Number(productId),
+            quantity: quantity
+        }));
+
+        const response = await fetch("http://localhost:8080/purchase/all", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                memberId: memberId,
+                items: items
+            })
+        });
+
+        if (!response.ok) {
+            const msg = await response.text();
+            alert("구매 실패: " + msg);
+            return;
+        }
+
+        const data = await response.json();
+        alert(`구매 완료! 남은 포인트: ${data.remainPoint.toLocaleString()}원`);
+        localStorage.removeItem(cartKey);
+
+        loadCart();
     }
 
     loadCart();
