@@ -19,15 +19,9 @@ public class ProductService {
     public List<ProductListResponse> findAll() {
         return productRepository.findAll()
                 .stream()
-                .map(product -> new ProductListResponse(
-                                product.id(),
-                                product.name(),
-                                product.price(),
-                                product.stock(),
-                                product.category()
-                        )
-                ).toList();
+                .map(this::fromProductResponse).toList();
     }
+
 
     public ProductPageResponse findOne(Long id) {
         Product product = productRepository.findById(id)
@@ -46,16 +40,22 @@ public class ProductService {
     public List<ProductListResponse> findByCategory(String categoryLabel) {
         Category category = Category.ofLabel(categoryLabel);
         return productRepository.findByCategory(category).stream()
-                .map(product -> new ProductListResponse(
-                        product.id(), product.name(), product.price(), product.stock(), product.category()
-                )).toList();
+                .map(this::fromProductResponse).toList();
     }
 
     public List<ProductListResponse> search(String keyword) {
         List<Product> products = productRepository.findByProductName_ProductNameContaining(keyword);
         return products.stream()
-                .map(product -> new ProductListResponse(
-                        product.id(), product.name(), product.price(), product.stock(), product.category()
-                )).toList();
+                .map(this::fromProductResponse).toList();
+    }
+
+    private ProductListResponse fromProductResponse(Product product) {
+        return new ProductListResponse(
+                product.id(),
+                product.name(),
+                product.price(),
+                product.stock(),
+                product.category()
+        );
     }
 }
