@@ -9,6 +9,11 @@ public enum MemberException {
     EXCEPTION_VALID_IS_BLANK_NICK_NAME("닉네임에 공백을 사용할 수 없습니다"),
     EXCEPTION_VALID_PATTERN_NICK_NAME("닉네임에 공백을 사용할 수 없습니다"),
 
+    EXCEPTION_VALID_EMPTY_PASSWORD("패스워드는 공백이 될 수 없습니다"),
+    EXCEPTION_VALID_IS_BLANK_PASSWORD("패스워드는 빈칸을 입력할 수 없습니다"),
+    EXCEPTION_VALID_RANGE_PASSWORD("패스워드는 9자리 이상으로 입력해야합니다"),
+
+
 
     ;
 

@@ -23,11 +23,11 @@ public class MemberId {
 
     public void validate(String id) {
         if (id == null || id.isEmpty()) {
-            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_EMPTY_NICKNAME.message());
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_EMPTY_ID.message());
         }
 
         if (id.contains(" ")) {
-            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_CONTAINS_BLANK_NICKNAME.message());
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_IS_BLANK_ID.message());
         }
 
         if(!id.matches(ID_PATTERN)) {
