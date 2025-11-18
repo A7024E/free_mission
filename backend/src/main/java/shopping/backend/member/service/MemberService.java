@@ -50,11 +50,15 @@ public class MemberService {
     public MemberLoginResponse login(MemberJoinRequest request) {
         Member member = findMemberById(memberRepository.findById(new MemberId(request.id())));
 
-        if (!member.isPasswordMatch(new Password(request.password()))) {
+        if (isLoginMatchPassword(request, member)) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_INVALID_LOGIN_PASSWORD.message());
         }
 
         return new MemberLoginResponse(member.Id(), member.nickName());
+    }
+
+    private static boolean isLoginMatchPassword(MemberJoinRequest request, Member member) {
+        return !member.isPasswordMatch(new Password(request.password()));
     }
 
 
@@ -63,12 +67,12 @@ public class MemberService {
         List<String> updatedValues = new ArrayList<>();
         Member member = findMemberOrThrow(id);
 
-        if (request.newPassword() != null && !request.newPassword().isBlank()) {
+        if (isHasNewPassword(request)) {
             member.updatePassword(new Password(request.newPassword()));
             updatedValues.add(UPDATE_RESULTS_VALUE_PASSWORD);
         }
 
-        if (request.newNickName() != null && !request.newNickName().isBlank()) {
+        if (isHasNewNickName(request.newNickName())) {
             NickName newNickName = new NickName(request.newNickName());
 
             if (memberRepository.existsByNickName(newNickName)) {
@@ -81,6 +85,7 @@ public class MemberService {
 
         return new MemberUpdateResponse(updatedValues);
     }
+
 
     @Transactional
     public void delete(String id) {
@@ -137,4 +142,13 @@ public class MemberService {
     private static boolean isPasswordValid(MemberVerifyRequest request, Member member) {
         return !member.isPasswordMatch(new Password(request.currentPassword()));
     }
+
+    private static boolean isHasNewNickName(String request) {
+        return request != null && !request.isBlank();
+    }
+
+    private static boolean isHasNewPassword(MemberUpdateRequest request) {
+        return isHasNewNickName(request.newPassword());
+    }
+
 }
