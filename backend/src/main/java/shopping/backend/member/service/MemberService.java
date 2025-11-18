@@ -33,14 +33,7 @@ public class MemberService {
     }
 
     public void join(MemberJoinRequest memberJoinRequest) {
-
-        if (memberRepository.existsByNickName(new NickName(memberJoinRequest.nickName()))) {
-            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_DUPLICATE_NICKNAME.message());
-        }
-
-        if (findUserId(new MemberId(memberJoinRequest.id())).isPresent()) {
-            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_DUPLICATE_ID.message());
-        }
+        validateDuplicate(memberJoinRequest);
 
         Member member = new Member(
                 new MemberId(memberJoinRequest.id()),
@@ -48,8 +41,10 @@ public class MemberService {
                 new NickName(memberJoinRequest.nickName()),
                 Gender.ofLabel(memberJoinRequest.gender())
         );
+
         memberRepository.save(member);
     }
+
 
     @Transactional
     public MemberLoginResponse login(MemberJoinRequest request) {
@@ -66,9 +61,7 @@ public class MemberService {
     @Transactional
     public MemberUpdateResponse update(String id, MemberUpdateRequest request) {
         List<String> updatedValues = new ArrayList<>();
-        MemberId memberId = new MemberId(id);
-
-        Member member = findMemberById(findUserId(memberId));
+        Member member = findMemberOrThrow(id);
 
         if (request.newPassword() != null && !request.newPassword().isBlank()) {
             member.updatePassword(new Password(request.newPassword()));
@@ -91,17 +84,13 @@ public class MemberService {
 
     @Transactional
     public void delete(String id) {
-        MemberId memberId = new MemberId(id);
-
-        Member member = findMemberById(findUserId(memberId));
-
+        Member member = findMemberOrThrow(id);
         memberRepository.delete(member);
     }
 
     @Transactional
     public void verify(String id, MemberVerifyRequest request) {
-        MemberId memberId = new MemberId(id);
-        Member member = findMemberById(findUserId(memberId));
+        Member member = findMemberOrThrow(id);
 
         if (!member.isPasswordMatch(new Password(request.currentPassword()))) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_PASSWORD_NOT_MATCH.message());
@@ -110,9 +99,7 @@ public class MemberService {
 
     @Transactional
     public MemberInfoResponse findMemberInfo(String id) {
-        MemberId memberId = new MemberId(id);
-
-        Member member = findMemberById(findUserId(memberId));
+        Member member = findMemberOrThrow(id);
 
         return new MemberInfoResponse(
                 member.Id(),
@@ -127,6 +114,23 @@ public class MemberService {
     }
 
     private Member findMemberById(Optional<Member> memberRepository) {
-        return memberRepository.orElseThrow(() -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        return memberRepository
+                .orElseThrow(() -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+    }
+
+    private Member findMemberOrThrow(String id) {
+        MemberId memberId = new MemberId(id);
+        Member member = findMemberById(findUserId(memberId));
+        return member;
+    }
+
+    private void validateDuplicate(MemberJoinRequest memberJoinRequest) {
+        if (memberRepository.existsByNickName(new NickName(memberJoinRequest.nickName()))) {
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_DUPLICATE_NICKNAME.message());
+        }
+
+        if (findUserId(new MemberId(memberJoinRequest.id())).isPresent()) {
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_DUPLICATE_ID.message());
+        }
     }
 }
