@@ -3,6 +3,9 @@ package shopping.backend.purchase.service;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import shopping.backend.exception.MemberException;
+import shopping.backend.exception.ProductException;
+import shopping.backend.exception.PurchaseException;
 import shopping.backend.member.model.Member;
 import shopping.backend.member.model.MemberId;
 import shopping.backend.member.model.MemberRepository;
@@ -27,20 +30,22 @@ public class PurchaseService {
 
     public PurchaseResponse purchase(PurchaseRequest request) {
         Member member = findMemberId(request)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다"));
+                .orElseThrow(
+                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
 
         Product product = productRepository.findById(request.productId())
-                .orElseThrow(() -> new IllegalArgumentException("상품 정보가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        ProductException.EXCEPTION_VALID_NOT_FOUND_PRODUCT.message()));
 
         int quantity = request.quantity();
         int totalPoint = product.price() * quantity;
 
         if (member.remain() < totalPoint) {
-            throw new IllegalArgumentException("포인트가 부족합니다");
+            throw new IllegalArgumentException(PurchaseException.EXCEPTION_INVALID_ENOUGH_POINT.message());
         }
 
         if (product.stock() < quantity) {
-            throw new IllegalArgumentException("재고가 부족합니다");
+            throw new IllegalArgumentException(PurchaseException.EXCEPTION_INVALID_ENOUGH_INVENTORY.message());
         }
 
         member.usePoint(totalPoint);
@@ -59,23 +64,26 @@ public class PurchaseService {
     @Transactional
     public CartPurchaseAllResponse purchaseAll(CartPurchaseAllRequest request) {
         Member member = memberRepository.findById(new MemberId(request.memberId()))
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
+                .orElseThrow(
+                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
 
         int totalPrice = 0;
 
         for (PurchaseItem item : request.items()) {
             Product product = productRepository.findById(item.productId())
-                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            ProductException.EXCEPTION_VALID_NOT_FOUND_PRODUCT.message()));
 
             if (product.stock() < item.quantity()) {
-                throw new IllegalArgumentException("재고가 부족한 상품이 있습니다: " + product.name());
+                throw new IllegalArgumentException(
+                        PurchaseException.EXCEPTION_INVALID_ENOUGH_ALERT.message() + product.name());
             }
 
             totalPrice += product.price() * item.quantity();
         }
 
         if (member.remain() < totalPrice) {
-            throw new IllegalArgumentException("포인트가 부족합니다.");
+            throw new IllegalArgumentException(PurchaseException.EXCEPTION_INVALID_ENOUGH_POINT.message());
         }
 
         for (PurchaseItem item : request.items()) {

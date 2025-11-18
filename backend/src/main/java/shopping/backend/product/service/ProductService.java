@@ -40,7 +40,8 @@ public class ProductService {
     public List<ProductListResponse> findByCategory(String categoryLabel) {
         Category category = Category.ofLabel(categoryLabel);
         return productRepository.findByCategory(category).stream()
-                .map(this::fromProductResponse).toList();
+                .map(this::fromProductResponse)
+                .toList();
     }
 
     public List<ProductListResponse> search(String keyword) {

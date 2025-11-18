@@ -1,6 +1,7 @@
 package shopping.backend.purchase.model;
 
 import jakarta.persistence.Embeddable;
+import shopping.backend.exception.PurchaseException;
 
 @Embeddable
 public class CartItem {
@@ -8,11 +9,12 @@ public class CartItem {
     private Long productId;
     private int quantity;
 
-    protected CartItem() { }
+    protected CartItem() {
+    }
 
     public CartItem(Long productId, int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException("수량은 1 이상이어야 합니다.");
+            throw new IllegalArgumentException(PurchaseException.EXCEPTION_INVALID_QUANTITY.message());
         }
         this.productId = productId;
         this.quantity = quantity;
