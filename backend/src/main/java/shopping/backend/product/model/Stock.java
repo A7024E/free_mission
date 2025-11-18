@@ -16,6 +16,13 @@ public class Stock {
         return stock;
     }
 
+    public void minus(int amount) {
+        if (stock < amount) {
+            throw new IllegalArgumentException("재고 부족");
+        }
+        this.stock -= amount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Stock stock1)) {

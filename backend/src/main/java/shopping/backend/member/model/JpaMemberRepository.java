@@ -24,11 +24,6 @@ public class JpaMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByNickName(NickName nickname) {
-        return jpaMemberRepository.findByNickName(nickname);
-    }
-
-    @Override
     public boolean existsByNickName(NickName nickname) {
         return jpaMemberRepository.existsByNickName(nickname);
     }

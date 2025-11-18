@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import shopping.backend.exception.MemberException;
 
 @Embeddable
 public class NickName {
@@ -24,15 +25,15 @@ public class NickName {
 
     private void validate(String nickName) {
         if (isValidNickName(nickName)) {
-            throw new IllegalArgumentException("닉네임은 한글,영어,숫자 및 2-8 글자까지 가능합니다");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_PATTERN_NICK_NAME.message());
         }
 
         if (nickName == null || nickName.isEmpty()) {
-            throw new IllegalArgumentException("닉네임에 공백을 사용할 수 없습니다");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_EMPTY_NICK_NAME.message());
         }
 
         if (nickName.isBlank()) {
-            throw new IllegalArgumentException("닉네임는 빈칸을 사용할 수 없습니다");
+            throw new IllegalArgumentException((MemberException.EXCEPTION_VALID_IS_BLANK_NICK_NAME.message()));
         }
     }
 

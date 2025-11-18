@@ -3,6 +3,7 @@ package shopping.backend.member.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
+import shopping.backend.exception.MemberException;
 
 @Embeddable
 public class MemberId {
@@ -22,15 +23,15 @@ public class MemberId {
 
     public void validate(String id) {
         if (id == null || id.isEmpty()) {
-            throw new IllegalArgumentException("아이디에 공백을 입력할 수 없습니다.");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_EMPTY_ID.message());
         }
 
         if (id.contains(" ")) {
-            throw new IllegalArgumentException("아이디에 빈칸을 입력할수 없습니다.");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_IS_BLANK_ID.message());
         }
 
         if(!id.matches(ID_PATTERN)) {
-            throw new IllegalArgumentException("아이디는 영어와 숫자만 가능합니다.");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_ID_PATTERN.message());
         }
 
     }
