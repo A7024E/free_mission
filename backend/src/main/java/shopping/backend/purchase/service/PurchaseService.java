@@ -17,8 +17,8 @@ import shopping.backend.purchase.dto.PurchaseResponse;
 @Service
 @Transactional
 public class PurchaseService {
-    private MemberRepository memberRepository;
-    private ProductRepository productRepository;
+    private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
 
     public PurchaseService(MemberRepository memberRepository, ProductRepository productRepository) {
         this.memberRepository = memberRepository;
@@ -31,6 +31,7 @@ public class PurchaseService {
 
         Product product = productRepository.findById(request.productId())
                 .orElseThrow(() -> new IllegalArgumentException("상품 정보가 없습니다."));
+
         int quantity = request.quantity();
         int totalPoint = product.price() * quantity;
 
@@ -41,8 +42,10 @@ public class PurchaseService {
         if (product.stock() < quantity) {
             throw new IllegalArgumentException("재고가 부족합니다");
         }
+
         member.usePoint(totalPoint);
         product.decreaseStock(quantity);
+
         return new PurchaseResponse(
                 member.Id(),
                 product.id(),
@@ -55,7 +58,6 @@ public class PurchaseService {
 
     @Transactional
     public CartPurchaseAllResponse purchaseAll(CartPurchaseAllRequest request) {
-
         Member member = memberRepository.findById(new MemberId(request.memberId()))
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
 
