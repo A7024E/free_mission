@@ -1,9 +1,14 @@
 package shopping.backend.exception;
 
 public enum MemberException {
-    EXCEPTION_VALID_EMPTY_NICKNAME("아이디에 공백을 입력할 수 없습니다."),
-    EXCEPTION_VALID_CONTAINS_BLANK_NICKNAME("아이디에 빈칸을 입력할수 없습니다."),
+    EXCEPTION_VALID_EMPTY_ID("아이디에 공백을 입력할 수 없습니다."),
+    EXCEPTION_VALID_IS_BLANK_ID("아이디에 빈칸을 입력할수 없습니다."),
     EXCEPTION_VALID_ID_PATTERN("아이디는 영어와 숫자만 가능합니다."),
+
+    EXCEPTION_VALID_EMPTY_NICK_NAME("닉네임에 공백을 사용할 수 없습니다"),
+    EXCEPTION_VALID_IS_BLANK_NICK_NAME("닉네임에 공백을 사용할 수 없습니다"),
+    EXCEPTION_VALID_PATTERN_NICK_NAME("닉네임에 공백을 사용할 수 없습니다"),
+
 
     ;
 
