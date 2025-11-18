@@ -28,7 +28,6 @@ public class Point {
         return point;
     }
 
-
     public void minus(int amount) {
         if (point < amount) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_POINT_LACK.message());

@@ -45,7 +45,6 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-
     @Transactional
     public MemberLoginResponse login(MemberJoinRequest request) {
         Member member = findMemberById(memberRepository.findById(new MemberId(request.id())));
@@ -56,11 +55,6 @@ public class MemberService {
 
         return new MemberLoginResponse(member.Id(), member.nickName());
     }
-
-    private static boolean isLoginMatchPassword(MemberJoinRequest request, Member member) {
-        return !member.isPasswordMatch(new Password(request.password()));
-    }
-
 
     @Transactional
     public MemberUpdateResponse update(String id, MemberUpdateRequest request) {
@@ -86,7 +80,6 @@ public class MemberService {
         return new MemberUpdateResponse(updatedValues);
     }
 
-
     @Transactional
     public void delete(String id) {
         Member member = findMemberOrThrow(id);
@@ -101,7 +94,6 @@ public class MemberService {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_PASSWORD_NOT_MATCH.message());
         }
     }
-
 
     @Transactional
     public MemberInfoResponse findMemberInfo(String id) {
@@ -121,7 +113,8 @@ public class MemberService {
 
     private Member findMemberById(Optional<Member> memberRepository) {
         return memberRepository
-                .orElseThrow(() -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+                .orElseThrow(
+                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
     }
 
     private Member findMemberOrThrow(String id) {
@@ -151,4 +144,7 @@ public class MemberService {
         return isHasNewNickName(request.newPassword());
     }
 
+    private static boolean isLoginMatchPassword(MemberJoinRequest request, Member member) {
+        return !member.isPasswordMatch(new Password(request.password()));
+    }
 }

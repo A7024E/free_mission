@@ -14,8 +14,6 @@ import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
 import shopping.backend.member.dto.MemberUpdateResponse;
 import shopping.backend.member.dto.MemberVerifyRequest;
-import shopping.backend.member.model.Member;
-import shopping.backend.member.model.MemberId;
 import shopping.backend.member.service.MemberService;
 
 @RestController
@@ -40,7 +38,8 @@ public class MemberController {
     }
 
     @PostMapping("/{id}/update")
-    public ResponseEntity<MemberUpdateResponse> update(@PathVariable("id") String id, @ModelAttribute MemberUpdateRequest memberRequest) {
+    public ResponseEntity<MemberUpdateResponse> update(@PathVariable("id") String id,
+                                                       @ModelAttribute MemberUpdateRequest memberRequest) {
         MemberUpdateResponse response = memberService.update(id, memberRequest);
         return ResponseEntity.ok(response);
     }

@@ -22,21 +22,21 @@ public class Password {
         return password;
     }
 
-    private void validate(String password){
-        if(password.length() < 8){
+    private void validate(String password) {
+        if (password.length() < 8) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_RANGE_PASSWORD.message());
         }
 
-        if(password == null || password.isEmpty()){
+        if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_EMPTY_PASSWORD.message());
         }
 
-        if(password.isBlank()){
+        if (password.isBlank()) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_IS_BLANK_PASSWORD.message());
         }
     }
 
-    public boolean isSame(Password other){
+    public boolean isSame(Password other) {
         return this.password.equals(other.password);
     }
 

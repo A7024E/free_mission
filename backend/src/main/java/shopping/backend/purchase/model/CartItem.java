@@ -20,19 +20,8 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public Long productId() {
-        return productId;
-    }
-
-    public int quantity() {
-        return quantity;
-    }
-
     public CartItem add(int quantity) {
         return new CartItem(productId, quantity + quantity);
     }
 
-    public CartItem update(int quantity) {
-        return new CartItem(productId, quantity);
-    }
 }
