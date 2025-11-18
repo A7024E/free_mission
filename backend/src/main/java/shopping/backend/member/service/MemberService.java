@@ -53,9 +53,7 @@ public class MemberService {
 
     @Transactional
     public MemberLoginResponse login(MemberJoinRequest request) {
-        Member member = memberRepository.findById(new MemberId(request.id()))
-                .orElseThrow(
-                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        Member member = findMemberById(memberRepository.findById(new MemberId(request.id())));
 
         if (!member.isPasswordMatch(new Password(request.password()))) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_INVALID_LOGIN_PASSWORD.message());
@@ -64,14 +62,13 @@ public class MemberService {
         return new MemberLoginResponse(member.Id(), member.nickName());
     }
 
+
     @Transactional
     public MemberUpdateResponse update(String id, MemberUpdateRequest request) {
         List<String> updatedValues = new ArrayList<>();
         MemberId memberId = new MemberId(id);
 
-        Member member = findUserId(memberId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        Member member = findMemberById(findUserId(memberId));
 
         if (request.newPassword() != null && !request.newPassword().isBlank()) {
             member.updatePassword(new Password(request.newPassword()));
@@ -96,9 +93,7 @@ public class MemberService {
     public void delete(String id) {
         MemberId memberId = new MemberId(id);
 
-        Member member = findUserId(memberId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        Member member = findMemberById(findUserId(memberId));
 
         memberRepository.delete(member);
     }
@@ -106,10 +101,7 @@ public class MemberService {
     @Transactional
     public void verify(String id, MemberVerifyRequest request) {
         MemberId memberId = new MemberId(id);
-
-        Member member = findUserId(memberId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        Member member = findMemberById(findUserId(memberId));
 
         if (!member.isPasswordMatch(new Password(request.currentPassword()))) {
             throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_PASSWORD_NOT_MATCH.message());
@@ -120,9 +112,7 @@ public class MemberService {
     public MemberInfoResponse findMemberInfo(String id) {
         MemberId memberId = new MemberId(id);
 
-        Member member = findUserId(memberId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
+        Member member = findMemberById(findUserId(memberId));
 
         return new MemberInfoResponse(
                 member.Id(),
@@ -134,5 +124,9 @@ public class MemberService {
 
     private Optional<Member> findUserId(MemberId memberId) {
         return memberRepository.findById(memberId);
+    }
+
+    private Member findMemberById(Optional<Member> memberRepository) {
+        return memberRepository.orElseThrow(() -> new IllegalArgumentException(MemberException.EXCEPTION_VALID_NOT_FOUND_MEMBER.message()));
     }
 }
