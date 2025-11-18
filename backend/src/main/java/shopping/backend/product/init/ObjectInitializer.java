@@ -21,11 +21,11 @@ public class ObjectInitializer {
 
     @PostConstruct
     public void init() {
-        saveIfNotExists("에어컨", 4400, 30, Category.OBJECT,"여름 필수템 에어컨!");
-        saveIfNotExists("책상", 2000, 30, Category.OBJECT,"튼튼한 원목 책상입니다.");
+        saveIfNotExists("에어컨", 4400, 30, Category.OBJECT, "여름 필수템 에어컨!");
+        saveIfNotExists("책상", 2000, 30, Category.OBJECT, "튼튼한 원목 책상입니다.");
     }
 
-    private void saveIfNotExists(String productName, int price, int stock, Category category,String description) {
+    private void saveIfNotExists(String productName, int price, int stock, Category category, String description) {
         if (productRepository.existsByProductName_ProductName(productName)) {
             return;
         }

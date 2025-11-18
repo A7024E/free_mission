@@ -3,6 +3,7 @@ package shopping.backend.member.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
+import shopping.backend.exception.MemberException;
 
 @Embeddable
 public class Point {
@@ -19,7 +20,7 @@ public class Point {
 
     public void validate(int point) {
         if (point < 0) {
-            throw new IllegalArgumentException("포인트는 음수가 될 수 없습니다.");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_POINT_NEGATIVE.message());
         }
     }
 
@@ -27,10 +28,9 @@ public class Point {
         return point;
     }
 
-
     public void minus(int amount) {
         if (point < amount) {
-            throw new IllegalArgumentException("포인트 부족");
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_POINT_LACK.message());
         }
         this.point -= amount;
     }

@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import shopping.backend.Message.SuccessMessage;
 import shopping.backend.member.dto.MemberInfoResponse;
 import shopping.backend.member.dto.MemberJoinRequest;
 import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
 import shopping.backend.member.dto.MemberUpdateResponse;
 import shopping.backend.member.dto.MemberVerifyRequest;
-import shopping.backend.member.model.Member;
-import shopping.backend.member.model.MemberId;
 import shopping.backend.member.service.MemberService;
 
 @RestController
@@ -29,7 +28,7 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity<String> join(@ModelAttribute MemberJoinRequest memberRequest) {
         memberService.join(memberRequest);
-        return ResponseEntity.ok("회원가입 완료 50000 포인트 적립");
+        return ResponseEntity.ok(SuccessMessage.MEMBER_JOIN_SUCCESS.message());
     }
 
     @PostMapping("/login")
@@ -39,7 +38,8 @@ public class MemberController {
     }
 
     @PostMapping("/{id}/update")
-    public ResponseEntity<MemberUpdateResponse> update(@PathVariable("id") String id, @ModelAttribute MemberUpdateRequest memberRequest) {
+    public ResponseEntity<MemberUpdateResponse> update(@PathVariable("id") String id,
+                                                       @ModelAttribute MemberUpdateRequest memberRequest) {
         MemberUpdateResponse response = memberService.update(id, memberRequest);
         return ResponseEntity.ok(response);
     }
@@ -47,13 +47,13 @@ public class MemberController {
     @PostMapping("/{id}/delete")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         memberService.delete(id);
-        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다");
+        return ResponseEntity.ok(SuccessMessage.MEMBER_DELETE_SUCCESS.message());
     }
 
     @PostMapping("/{id}/verify")
     public ResponseEntity<String> verify(@PathVariable("id") String id, @ModelAttribute MemberVerifyRequest request) {
         memberService.verify(id, request);
-        return ResponseEntity.ok("본인 인증이 완료되었습니다");
+        return ResponseEntity.ok(SuccessMessage.MEMBER_VERIFY_SUCCESS.message());
     }
 
     @GetMapping("/info/{id}")

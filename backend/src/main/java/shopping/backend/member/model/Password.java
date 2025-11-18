@@ -3,6 +3,7 @@ package shopping.backend.member.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
+import shopping.backend.exception.MemberException;
 
 @Embeddable
 public class Password {
@@ -21,21 +22,21 @@ public class Password {
         return password;
     }
 
-    private void validate(String password){
-        if(password.length() < 8){
-            throw new IllegalArgumentException("패스워드는 9자리 이상으로 입력해야합니다");
+    private void validate(String password) {
+        if (password.length() < 8) {
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_RANGE_PASSWORD.message());
         }
 
-        if(password == null || password.isEmpty()){
-            throw new IllegalArgumentException("패스워드는 공백이 될 수 없습니다");
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_EMPTY_PASSWORD.message());
         }
 
-        if(password.isBlank()){
-            throw new IllegalArgumentException("패스워드는 빈칸을 입력할 수 없습니다");
+        if (password.isBlank()) {
+            throw new IllegalArgumentException(MemberException.EXCEPTION_VALID_IS_BLANK_PASSWORD.message());
         }
     }
 
-    public boolean isSame(Password other){
+    public boolean isSame(Password other) {
         return this.password.equals(other.password);
     }
 

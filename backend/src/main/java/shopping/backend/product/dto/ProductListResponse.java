@@ -5,6 +5,5 @@ public record ProductListResponse(
         String name,
         int price,
         int stock,
-        String category
-) {
+        String category) {
 }
