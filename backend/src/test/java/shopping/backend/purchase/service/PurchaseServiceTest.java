@@ -102,4 +102,17 @@ class PurchaseServiceTest {
         assertThrows(IllegalArgumentException.class,
                 () -> purchaseService.purchase(request));
     }
+
+    @Test
+    @DisplayName("단일 구매 실패 - 상품 없음")
+    void purchase_fail_no_product() {
+        Member member = sampleMember();
+        when(memberRepository.findById(new MemberId("test"))).thenReturn(Optional.of(member));
+        when(productRepository.findById(999L)).thenReturn(Optional.empty());
+
+        PurchaseRequest req = new PurchaseRequest("test", 999L, 1);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> purchaseService.purchase(req));
+    }
 }
