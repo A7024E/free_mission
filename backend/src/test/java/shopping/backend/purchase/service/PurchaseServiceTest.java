@@ -2,6 +2,7 @@ package shopping.backend.purchase.service;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,5 +90,16 @@ class PurchaseServiceTest {
 
         verify(memberRepository, times(1)).findById(new MemberId("test"));
         verify(productRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("단일 구매 실패 - 회원 없음")
+    void purchase_fail_no_member() {
+        when(memberRepository.findById(new MemberId("Pobi"))).thenReturn(Optional.empty());
+
+        PurchaseRequest request = new PurchaseRequest("Pobi", 1L, 1);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> purchaseService.purchase(request));
     }
 }
