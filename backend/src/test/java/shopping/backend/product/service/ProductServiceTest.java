@@ -119,4 +119,17 @@ class ProductServiceTest {
                 .findByProductName_ProductNameContaining("고양");
     }
 
+    @Test
+    @DisplayName("상품명 검색 결과 없음")
+    void search_empty_list() {
+        // given
+        when(productRepository.findByProductName_ProductNameContaining("없는상품"))
+                .thenReturn(List.of());
+
+        // when
+        List<ProductListResponse> response = productService.search("없는상품");
+
+        // then
+        assertTrue(response.isEmpty());
+    }
 }
