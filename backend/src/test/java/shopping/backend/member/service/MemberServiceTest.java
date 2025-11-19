@@ -37,4 +37,16 @@ class MemberServiceTest {
         verify(memberRepository, times(1)).save(any(Member.class));
     }
 
+    @Test
+    @DisplayName("회원가입 실패 - 중복 닉네임")
+    void join_fail_duplicate_nickname() {
+        // given
+        MemberJoinRequest request = new MemberJoinRequest("test", "123456789", "닉네임", "남자");
+
+        when(memberRepository.existsByNickName(new NickName("닉네임"))).thenReturn(true);
+
+        // expected
+        assertThrows(IllegalArgumentException.class, () -> memberService.join(request));
+    }
+
 }
