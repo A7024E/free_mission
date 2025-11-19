@@ -82,5 +82,17 @@ class MemberServiceTest {
         assertEquals("닉네임", response.nickName());
     }
 
+    @Test
+    @DisplayName("로그인 실패 - 존재하지않는 회원")
+    void login_success_fail_not_found_memberId() {
+        MemberJoinRequest request = new MemberJoinRequest("test", "123456789", "닉네임", "남자");
+        Member mockMember = mock(Member.class);
+
+        when(memberRepository.findById(new MemberId("test1")))
+                .thenReturn(Optional.of(mockMember));
+
+        // when// then
+        assertThrows(IllegalArgumentException.class, () -> memberService.login(request));
+    }
 
 }
