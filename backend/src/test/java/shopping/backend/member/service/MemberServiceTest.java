@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import shopping.backend.member.dto.MemberJoinRequest;
 import shopping.backend.member.dto.MemberLoginResponse;
+import shopping.backend.member.dto.MemberUpdateRequest;
+import shopping.backend.member.dto.MemberUpdateResponse;
 import shopping.backend.member.model.Member;
 import shopping.backend.member.model.MemberId;
 import shopping.backend.member.model.MemberRepository;
@@ -110,5 +112,23 @@ class MemberServiceTest {
         assertThrows(IllegalArgumentException.class, () -> memberService.login(req));
     }
 
+    @Test
+    @DisplayName("회원 정보 수정 성공")
+    void update_success() {
+        // given
+        MemberUpdateRequest request = new MemberUpdateRequest("112312323", "123123123123", "바꾼닉넴");
+        Member mockMember = mock(Member.class);
 
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(memberRepository.existsByNickName(new NickName("바꾼닉넴")))
+                .thenReturn(false);
+
+        // when
+        MemberUpdateResponse response = memberService.update("test", request);
+
+        // then
+        assertTrue(response.updatedFields().contains("패스워드"));
+        assertTrue(response.updatedFields().contains("닉네임"));
+    }
 }
