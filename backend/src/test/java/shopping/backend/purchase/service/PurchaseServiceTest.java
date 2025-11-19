@@ -7,6 +7,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,9 @@ import shopping.backend.product.model.Product;
 import shopping.backend.product.model.ProductName;
 import shopping.backend.product.model.Stock;
 import shopping.backend.product.repository.ProductRepository;
+import shopping.backend.purchase.dto.CartPurchaseAllRequest;
+import shopping.backend.purchase.dto.CartPurchaseAllResponse;
+import shopping.backend.purchase.dto.PurchaseItem;
 import shopping.backend.purchase.dto.PurchaseRequest;
 import shopping.backend.purchase.dto.PurchaseResponse;
 
@@ -150,5 +156,39 @@ class PurchaseServiceTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> purchaseService.purchase(request));
+    }
+
+    @Test
+    @DisplayName("장바구니 전체 구매 성공")
+    void purchaseAll_success() {
+        // given
+        Member member = sampleMember();
+        Product firstProduct = sampleProduct();
+        Product secondProduct = new Product(
+                new ProductName("3D 강아지"),
+                new Price(4000),
+                new Stock(5),
+                Category.ANIMAL,
+                new Description("귀여운 강아지")
+        );
+
+        when(memberRepository.findById(new MemberId("test"))).thenReturn(Optional.of(member));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(firstProduct));
+        when(productRepository.findById(2L)).thenReturn(Optional.of(secondProduct));
+
+        List<PurchaseItem> items = List.of(
+                new PurchaseItem(1L, 2),
+                new PurchaseItem(2L, 1)
+        );
+
+        CartPurchaseAllRequest request = new CartPurchaseAllRequest("test", items);
+        // when
+        CartPurchaseAllResponse cartPurchaseAllResponse = purchaseService.purchaseAll(request);
+
+        // then
+        assertEquals(36000, cartPurchaseAllResponse.remainPoint());
+
+        assertEquals(8, firstProduct.stock());
+        assertEquals(4, secondProduct.stock());
     }
 }
