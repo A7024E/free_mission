@@ -7,9 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,6 @@ import shopping.backend.member.model.MemberId;
 import shopping.backend.member.model.MemberRepository;
 import shopping.backend.member.model.NickName;
 import shopping.backend.member.model.Password;
-import shopping.backend.member.model.Point;
 import shopping.backend.product.model.Category;
 import shopping.backend.product.model.Description;
 import shopping.backend.product.model.Price;
@@ -201,9 +198,9 @@ class PurchaseServiceTest {
                 new PurchaseItem(2L, 1)
         );
 
-        CartPurchaseAllRequest req = new CartPurchaseAllRequest("xx", items);
+        CartPurchaseAllRequest request = new CartPurchaseAllRequest("xx", items);
 
         assertThrows(IllegalArgumentException.class,
-                () -> purchaseService.purchaseAll(req));
+                () -> purchaseService.purchaseAll(request));
     }
 }
