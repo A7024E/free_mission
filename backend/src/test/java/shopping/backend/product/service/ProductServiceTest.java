@@ -84,4 +84,21 @@ class ProductServiceTest {
         assertThrows(IllegalArgumentException.class, () -> productService.findOne(1L));
     }
 
+    @Test
+    @DisplayName("카테고리로 상품 조회 성공")
+    void findByCategory_success() {
+        // given
+        when(productRepository.findByCategory(Category.ANIMAL))
+                .thenReturn(List.of(sampleProduct()));
+
+        // when
+        List<ProductListResponse> list = productService.findByCategory("동물");
+
+        // then
+        assertEquals(1, list.size());
+        assertEquals("3D 고양이", list.get(0).name());
+
+        verify(productRepository, times(1)).findByCategory(Category.ANIMAL);
+    }
+
 }
