@@ -15,6 +15,7 @@ import shopping.backend.member.dto.MemberJoinRequest;
 import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
 import shopping.backend.member.dto.MemberUpdateResponse;
+import shopping.backend.member.dto.MemberVerifyRequest;
 import shopping.backend.member.model.Member;
 import shopping.backend.member.model.MemberId;
 import shopping.backend.member.model.MemberRepository;
@@ -171,5 +172,33 @@ class MemberServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> memberService.delete("test"));
+    }
+
+    @Test
+    @DisplayName("본인 확인 성공")
+    void verify_success() {
+        // given
+        MemberVerifyRequest request = new MemberVerifyRequest("123123123");
+        Member mockMember = mock(Member.class);
+
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(mockMember.isPasswordMatch(any())).thenReturn(true);
+
+        // expect
+        assertDoesNotThrow(() -> memberService.verify("test", request));
+    }
+
+    @Test
+    @DisplayName("본인 확인 실패 - 비밀번호 불일치")
+    void verify_fail_wrong_password() {
+        MemberVerifyRequest req = new MemberVerifyRequest("pw123");
+        Member mockMember = mock(Member.class);
+
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(mockMember.isPasswordMatch(any())).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> memberService.verify("test", req));
     }
 }
