@@ -163,4 +163,13 @@ class MemberServiceTest {
         // then
         verify(memberRepository, times(1)).delete(mockMember);
     }
+
+    @Test
+    @DisplayName("회원 삭제 실패 - 존재하지 않는 회원")
+    void delete_fail_no_member() {
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> memberService.delete("test"));
+    }
 }
