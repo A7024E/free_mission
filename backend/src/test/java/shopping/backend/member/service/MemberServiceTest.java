@@ -148,5 +148,19 @@ class MemberServiceTest {
         assertThrows(IllegalArgumentException.class, () -> memberService.update("test", req));
     }
 
+    @Test
+    @DisplayName("회원 삭제 성공")
+    void delete_success() {
+        // given
+        Member mockMember = mock(Member.class);
 
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+
+        // when
+        memberService.delete("test");
+
+        // then
+        verify(memberRepository, times(1)).delete(mockMember);
+    }
 }
