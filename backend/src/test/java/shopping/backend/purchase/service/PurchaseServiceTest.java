@@ -137,4 +137,18 @@ class PurchaseServiceTest {
                 () -> purchaseService.purchase(request));
     }
 
+    @Test
+    @DisplayName("단일 구매 실패 - 재고 부족")
+    void purchase_fail_stock_not_enough() {
+        Member member = sampleMember();
+        Product product = sampleProduct();
+
+        when(memberRepository.findById(new MemberId("test"))).thenReturn(Optional.of(member));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        PurchaseRequest request = new PurchaseRequest("test", 1L, 20);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> purchaseService.purchase(request));
+    }
 }
