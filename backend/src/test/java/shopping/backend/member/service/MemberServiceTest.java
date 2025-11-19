@@ -95,4 +95,20 @@ class MemberServiceTest {
         assertThrows(IllegalArgumentException.class, () -> memberService.login(request));
     }
 
+    @Test
+    @DisplayName("로그인 실패 - 일치하지않는 비밀번호")
+    void login_success_fail_not_match_password() {
+        // given
+        MemberJoinRequest req = new MemberJoinRequest("test", "123456789", "닉네임", "남자");
+        Member mockMember = mock(Member.class);
+
+        //when
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(mockMember.isPasswordMatch(any())).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> memberService.login(req));
+    }
+
+
 }
