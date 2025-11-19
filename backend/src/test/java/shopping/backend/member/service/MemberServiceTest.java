@@ -131,4 +131,22 @@ class MemberServiceTest {
         assertTrue(response.updatedFields().contains("패스워드"));
         assertTrue(response.updatedFields().contains("닉네임"));
     }
+
+    @Test
+    @DisplayName("회원 정보 수정 실패 - 닉네임 중복")
+    void update_fail_duplicate_nickname() {
+        // given
+        MemberUpdateRequest req = new MemberUpdateRequest(null, "newNick","원래닉넴");
+        Member mockMember = mock(Member.class);
+
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(memberRepository.existsByNickName(new NickName("newNick")))
+                .thenReturn(true);
+
+        // expect
+        assertThrows(IllegalArgumentException.class, () -> memberService.update("test", req));
+    }
+
+
 }
