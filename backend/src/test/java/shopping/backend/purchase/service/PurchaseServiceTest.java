@@ -110,9 +110,31 @@ class PurchaseServiceTest {
         when(memberRepository.findById(new MemberId("test"))).thenReturn(Optional.of(member));
         when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
-        PurchaseRequest req = new PurchaseRequest("test", 999L, 1);
+        PurchaseRequest request = new PurchaseRequest("test", 999L, 1);
 
         assertThrows(IllegalArgumentException.class,
-                () -> purchaseService.purchase(req));
+                () -> purchaseService.purchase(request));
     }
+
+    @Test
+    @DisplayName("단일 구매 실패 - 포인트 부족")
+    void purchase_fail_not_enough_point() {
+        Member member = sampleMember();
+        Product expensive = new Product(
+                new ProductName("비싼거"),
+                new Price(60000),
+                new Stock(10),
+                Category.OBJECT,
+                new Description("비싼 상품")
+        );
+
+        when(memberRepository.findById(new MemberId("test"))).thenReturn(Optional.of(member));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(expensive));
+
+        PurchaseRequest request = new PurchaseRequest("test", 1L, 1);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> purchaseService.purchase(request));
+    }
+
 }
