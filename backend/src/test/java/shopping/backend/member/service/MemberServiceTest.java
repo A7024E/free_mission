@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import shopping.backend.member.dto.MemberJoinRequest;
+import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.model.Member;
 import shopping.backend.member.model.MemberId;
 import shopping.backend.member.model.MemberRepository;
@@ -60,5 +61,26 @@ class MemberServiceTest {
         //expected
         assertThrows(IllegalArgumentException.class, () -> memberService.join(request));
     }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void login_success() {
+        MemberJoinRequest request = new MemberJoinRequest("test", "123456789", "닉네임", "남자");
+        Member mockMember = mock(Member.class);
+
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(mockMember.isPasswordMatch(any())).thenReturn(true);
+        when(mockMember.Id()).thenReturn("test");
+        when(mockMember.nickName()).thenReturn("닉네임");
+
+        // when
+        MemberLoginResponse response = memberService.login(request);
+
+        // then
+        assertEquals("test", response.id());
+        assertEquals("닉네임", response.nickName());
+    }
+
 
 }
