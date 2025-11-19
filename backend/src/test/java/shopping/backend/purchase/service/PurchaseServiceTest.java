@@ -191,4 +191,19 @@ class PurchaseServiceTest {
         assertEquals(8, firstProduct.stock());
         assertEquals(4, secondProduct.stock());
     }
+
+    @Test
+    @DisplayName("장바구니 전체 구매 실패 - 회원 없음")
+    void purchaseAll_fail_no_member() {
+        when(memberRepository.findById(new MemberId("xx"))).thenReturn(Optional.empty());
+        List<PurchaseItem> items = List.of(
+                new PurchaseItem(1L, 2),
+                new PurchaseItem(2L, 1)
+        );
+
+        CartPurchaseAllRequest req = new CartPurchaseAllRequest("xx", items);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> purchaseService.purchaseAll(req));
+    }
 }
