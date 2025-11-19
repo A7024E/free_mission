@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import shopping.backend.member.dto.MemberInfoResponse;
@@ -138,7 +137,7 @@ class MemberServiceTest {
     @DisplayName("회원 정보 수정 실패 - 닉네임 중복")
     void update_fail_duplicate_nickname() {
         // given
-        MemberUpdateRequest req = new MemberUpdateRequest(null, "newNick","원래닉넴");
+        MemberUpdateRequest req = new MemberUpdateRequest(null, "newNick", "원래닉넴");
         Member mockMember = mock(Member.class);
 
         when(memberRepository.findById(new MemberId("test")))
