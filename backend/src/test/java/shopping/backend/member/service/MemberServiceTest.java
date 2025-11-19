@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import shopping.backend.member.dto.MemberInfoResponse;
 import shopping.backend.member.dto.MemberJoinRequest;
 import shopping.backend.member.dto.MemberLoginResponse;
 import shopping.backend.member.dto.MemberUpdateRequest;
@@ -200,5 +201,25 @@ class MemberServiceTest {
         when(mockMember.isPasswordMatch(any())).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> memberService.verify("test", req));
+    }
+
+    @Test
+    @DisplayName("마이페이지 조회 성공")
+    void findMemberInfo_success() {
+        Member mockMember = mock(Member.class);
+
+        when(memberRepository.findById(new MemberId("test")))
+                .thenReturn(Optional.of(mockMember));
+        when(mockMember.Id()).thenReturn("test");
+        when(mockMember.nickName()).thenReturn("닉");
+        when(mockMember.gender()).thenReturn("남자");
+        when(mockMember.remain()).thenReturn(50000);
+
+        MemberInfoResponse response = memberService.findMemberInfo("test");
+
+        assertEquals("test", response.id());
+        assertEquals("닉", response.nickName());
+        assertEquals("남자", response.gender());
+        assertEquals(50000, response.point());
     }
 }
