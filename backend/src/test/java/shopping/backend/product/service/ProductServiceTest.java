@@ -101,4 +101,22 @@ class ProductServiceTest {
         verify(productRepository, times(1)).findByCategory(Category.ANIMAL);
     }
 
+    @Test
+    @DisplayName("상품명 검색 성공")
+    void search_success() {
+        // given
+        when(productRepository.findByProductName_ProductNameContaining("고양"))
+                .thenReturn(List.of(sampleProduct()));
+
+        // when
+        List<ProductListResponse> resp = productService.search("고양");
+
+        // then
+        assertEquals(1, resp.size());
+        assertEquals("3D 고양이", resp.get(0).name());
+
+        verify(productRepository, times(1))
+                .findByProductName_ProductNameContaining("고양");
+    }
+
 }
