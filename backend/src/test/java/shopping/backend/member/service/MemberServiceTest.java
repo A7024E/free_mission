@@ -49,4 +49,16 @@ class MemberServiceTest {
         assertThrows(IllegalArgumentException.class, () -> memberService.join(request));
     }
 
+    @Test
+    @DisplayName("회원가입 실패 - ㅈ중복 아이디")
+    void join_fail_duplicate_member_id() {
+        // given
+        MemberJoinRequest request = new MemberJoinRequest("test", "123456789", "닉네임", "남자");
+
+        when(memberRepository.findById(new MemberId("test"))).thenReturn(Optional.of(mock(Member.class)));
+
+        //expected
+        assertThrows(IllegalArgumentException.class, () -> memberService.join(request));
+    }
+
 }
